@@ -8,8 +8,8 @@ AUTH_BINARY_DIR = platform/auth
 build-auth:
 	cd $(AUTH_BINARY_DIR) && go build -o $(BUILD_DIR)/$(AUTH_BINARY_NAME) main.go
 
-run-auth: build-auth
-	cd $(AUTH_BINARY_DIR) && ./$(BUILD_DIR)/$(AUTH_BINARY_NAME)
+run-auth:
+	cd $(AUTH_BINARY_DIR) && go run main.go
 
 clean-auth:
 	cd $(AUTH_BINARY_DIR) && rm -rf ./$(BUILD_DIR)
