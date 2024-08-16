@@ -21,10 +21,10 @@ type DatabaseConfig struct {
 
 var AppConfig Config
 
-func LoadConfig() {
+func LoadEnvironmentVars() {
     err := godotenv.Load()
     if err != nil {
-        log.Println("No .env file found")
+        log.Fatalf("Error loading .env file")
     }
 
     AppConfig = Config{
