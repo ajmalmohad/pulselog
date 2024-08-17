@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func CreateToken(userId, email string, expiryDuration time.Duration) (string, error) {
+func CreateToken(userId uint, email string, expiryDuration time.Duration) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": userId,
 		"email":   email,
@@ -24,11 +24,11 @@ func CreateToken(userId, email string, expiryDuration time.Duration) (string, er
 	return tokenString, nil
 }
 
-func CreateAccessToken(userId, email string) (string, error) {
+func CreateAccessToken(userId uint, email string) (string, error) {
 	return CreateToken(userId, email, time.Hour*24*7)
 }
 
-func CreateRefreshToken(userId, email string) (string, error) {
+func CreateRefreshToken(userId uint, email string) (string, error) {
 	return CreateToken(userId, email, time.Hour*24*30)
 }
 
@@ -42,4 +42,21 @@ func VerifyToken(tokenString string) error {
 	}
 
 	return nil
+}
+
+func ExtractClaims(tokenString string) (jwt.MapClaims, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(config.AppConfig.JWTSecret), nil
+	})
+
+	if err != nil || !token.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, fmt.Errorf("invalid claims")
+	}
+
+	return claims, nil
 }
