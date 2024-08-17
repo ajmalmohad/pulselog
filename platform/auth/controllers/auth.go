@@ -31,7 +31,7 @@ func (c *AuthController) SignupHandler(ctx *gin.Context) {
 	}
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{Error: err.Error()})
+		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "Invalid request body"})
 		return
 	}
 
@@ -93,7 +93,7 @@ func (c *AuthController) LoginHandler(ctx *gin.Context) {
 	}
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{Error: err.Error()})
+		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "Invalid request body"})
 		return
 	}
 
@@ -147,7 +147,7 @@ func (c *AuthController) ReauthenticateHandler(ctx *gin.Context) {
 	}
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{Error: err.Error()})
+		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "Invalid request body"})
 		return
 	}
 

@@ -1,3 +1,0 @@
-[] database schema
-[] routes
-[] security
