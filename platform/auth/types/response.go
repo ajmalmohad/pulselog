@@ -6,7 +6,8 @@ type SuccessResponse struct {
 }
 
 type ErrorResponse struct {
-	Error string `json:"error"`
+	Error  string `json:"error"`
+	Detail string `json:"detail"`
 }
 
 type TokenResponse struct {

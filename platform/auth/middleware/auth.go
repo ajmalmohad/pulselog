@@ -13,7 +13,9 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
 		if authHeader == "" {
-			ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{Error: "Authorization header is required"})
+			ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{
+				Error: "Authorization header is required",
+			})
 			ctx.Abort()
 			return
 		}
@@ -27,28 +29,38 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		err := utils.VerifyToken(tokenString)
 		if err != nil {
-			ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{Error: "Invalid token"})
+			ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{
+				Error:  "Invalid token",
+				Detail: err.Error(),
+			})
 			ctx.Abort()
 			return
 		}
 
 		claims, err := utils.ExtractClaims(tokenString)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to extract claims"})
+			ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+				Error:  "Failed to extract claims",
+				Detail: err.Error(),
+			})
 			ctx.Abort()
 			return
 		}
 
 		userID, ok := claims["user_id"].(uint)
 		if !ok {
-			ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to extract user ID from claims"})
+			ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+				Error: "Failed to extract user ID from claims",
+			})
 			ctx.Abort()
 			return
 		}
 
 		email, ok := claims["email"].(string)
 		if !ok {
-			ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to extract email from claims"})
+			ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+				Error: "Failed to extract email from claims",
+			})
 			ctx.Abort()
 			return
 		}

@@ -31,13 +31,19 @@ func (c *AuthController) SignupHandler(ctx *gin.Context) {
 	}
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "Invalid request body"})
+		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
+			Error:  "Invalid request body",
+			Detail: err.Error(),
+		})
 		return
 	}
 
 	hashedPassword, err := utils.HashPassword(input.Password)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to hash password"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to hash password",
+			Detail: err.Error(),
+		})
 		return
 	}
 
@@ -49,19 +55,28 @@ func (c *AuthController) SignupHandler(ctx *gin.Context) {
 
 	_, err = c.userRepository.Create(user)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to create user"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to create user",
+			Detail: err.Error(),
+		})
 		return
 	}
 
 	accessToken, err := utils.CreateAccessToken(user.ID, user.Email)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to create access token"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to create access token",
+			Detail: err.Error(),
+		})
 		return
 	}
 
 	refreshToken, err := utils.CreateRefreshToken(user.ID, user.Email)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to create refresh token"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to create refresh token",
+			Detail: err.Error(),
+		})
 		return
 	}
 
@@ -73,7 +88,10 @@ func (c *AuthController) SignupHandler(ctx *gin.Context) {
 
 	_, err = c.refreshTokenRepository.Create(refreshTokenModel)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to save refresh token"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to save refresh token",
+			Detail: err.Error(),
+		})
 		return
 	}
 
@@ -93,30 +111,44 @@ func (c *AuthController) LoginHandler(ctx *gin.Context) {
 	}
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "Invalid request body"})
+		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
+			Error:  "Invalid request body",
+			Detail: err.Error(),
+		})
 		return
 	}
 
 	user, err := c.userRepository.FindByEmail(input.Email)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{Error: "Invalid email or password"})
+		ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{
+			Error:  "Invalid email or password",
+			Detail: err.Error(),
+		})
 		return
 	}
 
 	if !utils.CheckPasswordHash(input.Password, user.Password) {
-		ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{Error: "Invalid email or password"})
+		ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{
+			Error: "Invalid email or password",
+		})
 		return
 	}
 
 	accessToken, err := utils.CreateAccessToken(user.ID, user.Email)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to create access token"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to create access token",
+			Detail: err.Error(),
+		})
 		return
 	}
 
 	refreshToken, err := utils.CreateRefreshToken(user.ID, user.Email)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to create refresh token"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to create refresh token",
+			Detail: err.Error(),
+		})
 		return
 	}
 
@@ -128,7 +160,10 @@ func (c *AuthController) LoginHandler(ctx *gin.Context) {
 
 	_, err = c.refreshTokenRepository.Create(refreshTokenModel)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to save refresh token"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to save refresh token",
+			Detail: err.Error(),
+		})
 		return
 	}
 
@@ -147,46 +182,65 @@ func (c *AuthController) ReauthenticateHandler(ctx *gin.Context) {
 	}
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "Invalid request body"})
+		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
+			Error:  "Invalid request body",
+			Detail: err.Error(),
+		})
 		return
 	}
 
 	err := utils.VerifyToken(input.RefreshToken)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{Error: "Invalid refresh token"})
+		ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{
+			Error:  "Invalid refresh token",
+			Detail: err.Error(),
+		})
 		return
 	}
 
 	_, err = c.refreshTokenRepository.FindByToken(input.RefreshToken)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{Error: "Invalid refresh token"})
+		ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{
+			Error:  "Invalid refresh token",
+			Detail: err.Error(),
+		})
 		return
 	}
 
 	claims, err := utils.ExtractClaims(input.RefreshToken)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to extract claims"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to extract claims",
+			Detail: err.Error(),
+		})
 		ctx.Abort()
 		return
 	}
 
 	userID, ok := claims["user_id"].(uint)
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to extract user ID from claims"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error: "Failed to extract user ID from claims",
+		})
 		ctx.Abort()
 		return
 	}
 
 	email, ok := claims["email"].(string)
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to extract email from claims"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error: "Failed to extract email from claims",
+		})
 		ctx.Abort()
 		return
 	}
 
 	accessToken, err := utils.CreateAccessToken(userID, email)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to create access token"})
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to create access token",
+			Detail: err.Error(),
+		})
 		return
 	}
 
