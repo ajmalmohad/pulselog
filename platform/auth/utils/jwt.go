@@ -60,3 +60,17 @@ func ExtractClaims(tokenString string) (jwt.MapClaims, error) {
 
 	return claims, nil
 }
+
+func ExtractUserIDAndEmailFromClaims(claims map[string]interface{}) (uint, string, error) {
+	userIDFloat, ok := claims["user_id"].(float64)
+	if !ok {
+		return 0, "", fmt.Errorf("failed to extract user ID from claims")
+	}
+
+	email, ok := claims["email"].(string)
+	if !ok {
+		return 0, "", fmt.Errorf("failed to extract email from claims")
+	}
+
+	return uint(userIDFloat), email, nil
+}
