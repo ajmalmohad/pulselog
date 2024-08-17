@@ -25,7 +25,7 @@ func CreateToken(userId uint, email string, expiryDuration time.Duration) (strin
 }
 
 func CreateAccessToken(userId uint, email string) (string, error) {
-	return CreateToken(userId, email, time.Hour*24*7)
+	return CreateToken(userId, email, time.Hour)
 }
 
 func CreateRefreshToken(userId uint, email string) (string, error) {
