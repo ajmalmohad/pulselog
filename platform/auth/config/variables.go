@@ -1,48 +1,51 @@
 package config
 
 import (
-    "log"
-    "os"
-    "github.com/joho/godotenv"
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
+var AppConfig *Config = LoadEnvironmentVars()
+
+func getEnv(key string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	log.Fatalf("environment variable not set: %s", key)
+	return ""
+}
+
 type Config struct {
-    DB        DatabaseConfig
-    JWTSecret string
+	DB        DatabaseConfig
+	JWTSecret string
 }
 
 type DatabaseConfig struct {
-    DBHost     string
-    DBPort     string
-    DBUser     string
-    DBPassword string
-    DBName     string
+	DBHost     string
+	DBPort     string
+	DBUser     string
+	DBPassword string
+	DBName     string
 }
 
-var AppConfig Config
+func LoadEnvironmentVars() *Config {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
 
-func LoadEnvironmentVars() {
-    err := godotenv.Load()
-    if err != nil {
-        log.Fatalf("Error loading .env file")
-    }
+	config := Config{
+		JWTSecret: getEnv("JWT_SECRET"),
+		DB: DatabaseConfig{
+			DBHost:     getEnv("DB_HOST"),
+			DBPort:     getEnv("DB_PORT"),
+			DBUser:     getEnv("DB_USER"),
+			DBPassword: getEnv("DB_PASSWORD"),
+			DBName:     getEnv("DB_NAME"),
+		},
+	}
 
-    AppConfig = Config{
-        JWTSecret: getEnv("JWT_SECRET"),
-        DB: DatabaseConfig{
-            DBHost:     getEnv("DB_HOST"),
-            DBPort:     getEnv("DB_PORT"),
-            DBUser:     getEnv("DB_USER"),
-            DBPassword: getEnv("DB_PASSWORD"),
-            DBName:     getEnv("DB_NAME"),
-        },
-    }
-}
-
-func getEnv(key string) string {
-    if value, exists := os.LookupEnv(key); exists {
-        return value
-    }
-	log.Fatalf("environment variable not set: %s", key)
-    return ""
+	return &config
 }
