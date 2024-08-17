@@ -3,11 +3,12 @@ package config
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 )
 
-var AppConfig *Config = LoadEnvironmentVars()
+var AppConfig *Config
 
 func getEnv(key string) string {
 	if value, exists := os.LookupEnv(key); exists {
@@ -30,10 +31,23 @@ type DatabaseConfig struct {
 	DBName     string
 }
 
-func LoadEnvironmentVars() *Config {
-	err := godotenv.Load()
+func LoadEnvironmentVars(relativePath string) error {
+	var err error
+
+	if relativePath == "" {
+		err = godotenv.Load()
+	} else {
+		var absPath string
+		absPath, err = filepath.Abs(relativePath)
+		if err != nil {
+			return err
+		}
+
+		err = godotenv.Load(absPath)
+	}
+
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		return err
 	}
 
 	config := Config{
@@ -47,5 +61,6 @@ func LoadEnvironmentVars() *Config {
 		},
 	}
 
-	return &config
+	AppConfig = &config
+	return nil
 }

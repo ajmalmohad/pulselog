@@ -9,6 +9,11 @@ import (
 )
 
 func main() {
+	err := config.LoadEnvironmentVars("")
+	if err != nil {
+		panic(err)
+	}
+
 	db, err := config.InitDatabase()
 	if err != nil {
 		panic(err)
