@@ -11,5 +11,8 @@ build-auth:
 run-auth:
 	cd $(AUTH_BINARY_DIR) && go run main.go
 
+test-auth:
+	cd $(AUTH_BINARY_DIR) && go test ./tests
+
 clean-auth:
 	cd $(AUTH_BINARY_DIR) && rm -rf ./$(BUILD_DIR)

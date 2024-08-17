@@ -2,6 +2,7 @@ package routes
 
 import (
 	"pulselog/auth/controllers"
+	"pulselog/auth/middleware"
 	"pulselog/auth/repositories"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,7 @@ import (
 func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	authRouter := router.Group("/auth")
 	userRouter := router.Group("/users")
+	userRouter.Use(middleware.AuthMiddleware())
 
 	userRepository, refreshTokenRepository := initializeRepositories(db)
 	authController, userController := initializeControllers(userRepository, refreshTokenRepository)
