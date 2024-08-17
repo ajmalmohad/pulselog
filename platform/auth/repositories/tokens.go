@@ -27,7 +27,7 @@ func (r *RefreshTokenRepository) Update(refreshToken *models.RefreshToken) (*mod
 }
 
 func (r *RefreshTokenRepository) Delete(refreshToken *models.RefreshToken) (*models.RefreshToken, error) {
-	result := r.db.Delete(refreshToken)
+	result := r.db.Unscoped().Delete(refreshToken)
 	return refreshToken, result.Error
 }
 

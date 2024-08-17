@@ -27,7 +27,7 @@ func (r *UserRepository) Update(user *models.User) (*models.User, error) {
 }
 
 func (r *UserRepository) Delete(user *models.User) (*models.User, error) {
-	result := r.db.Delete(user)
+	result := r.db.Unscoped().Delete(user)
 	return user, result.Error
 }
 
