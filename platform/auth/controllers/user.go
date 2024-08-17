@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"pulselog/auth/repositories"
 	"pulselog/auth/types"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,69 +18,17 @@ func NewUserController(userRepository *repositories.UserRepository) *UserControl
 	}
 }
 
-func (u *UserController) DisableUserHandler(ctx *gin.Context) {
-	userIDParam := ctx.Param("id")
-	userID, err := strconv.ParseUint(userIDParam, 10, 32)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
-			Error:  "Invalid user ID, must be a number",
-			Detail: err.Error(),
-		})
-		return
-	}
-
-	tokenUserID := ctx.GetUint("user_id")
-	if tokenUserID != uint(userID) {
-		ctx.JSON(http.StatusForbidden, types.ErrorResponse{
-			Error: "You are not allowed to disable this user",
-		})
-		return
-	}
-
-	user, err := u.userRepository.FindByID(uint(userID))
-	if err != nil {
-		ctx.JSON(http.StatusNotFound, types.ErrorResponse{
-			Error:  "User not found",
-			Detail: err.Error(),
-		})
-		return
-	}
-
-	user.IsActive = false
-	_, err = u.userRepository.Update(user)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
-			Error:  "Failed to disable user",
-			Detail: err.Error(),
-		})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, types.SuccessResponse{
-		Message: "User disabled successfully",
-	})
-}
-
 func (u *UserController) DeleteUserHandler(ctx *gin.Context) {
-	userIDParam := ctx.Param("id")
-	userID, err := strconv.ParseUint(userIDParam, 10, 32)
-	if err != nil {
+	userID, exists := ctx.Get("user_id")
+	if !exists {
 		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
-			Error:  "Invalid user ID",
-			Detail: err.Error(),
+			Error:  "User ID not provided",
+			Detail: "The user_id parameter is missing from the context",
 		})
 		return
 	}
 
-	tokenUserID := ctx.GetUint("user_id")
-	if tokenUserID != uint(userID) {
-		ctx.JSON(http.StatusForbidden, types.ErrorResponse{
-			Error: "You are not allowed to disable this user",
-		})
-		return
-	}
-
-	user, err := u.userRepository.FindByID(uint(userID))
+	user, err := u.userRepository.FindByID(userID.(uint))
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, types.ErrorResponse{
 			Error:  "User not found",

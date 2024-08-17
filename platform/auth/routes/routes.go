@@ -40,6 +40,5 @@ func setupAuthRoutes(router *gin.RouterGroup, controller *controllers.AuthContro
 }
 
 func setupUserRoutes(router *gin.RouterGroup, controller *controllers.UserController) {
-	router.POST("/disable", controller.DisableUserHandler)
 	router.DELETE("/delete", controller.DeleteUserHandler)
 }

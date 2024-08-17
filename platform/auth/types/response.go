@@ -1,8 +1,8 @@
 package types
 
 type SuccessResponse struct {
-	Message string        `json:"message"`
-	Data    TokenResponse `json:"data"`
+	Message string `json:"message"`
+	Data    any    `json:"data"`
 }
 
 type ErrorResponse struct {

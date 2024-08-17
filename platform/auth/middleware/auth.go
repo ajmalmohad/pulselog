@@ -47,7 +47,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		userID, ok := claims["user_id"].(uint)
+		userIDFloat, ok := claims["user_id"].(float64)
 		if !ok {
 			ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
 				Error: "Failed to extract user ID from claims",
@@ -55,6 +55,8 @@ func AuthMiddleware() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
+
+		userID := uint(userIDFloat)
 
 		email, ok := claims["email"].(string)
 		if !ok {
