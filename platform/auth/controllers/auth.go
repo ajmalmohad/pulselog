@@ -6,7 +6,6 @@ import (
 	"pulselog/auth/repositories"
 	"pulselog/auth/types"
 	"pulselog/auth/utils"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -158,13 +157,34 @@ func (c *AuthController) ReauthenticateHandler(ctx *gin.Context) {
 		return
 	}
 
-	claims, err := utils.ExtractClaims(input.RefreshToken)
+	_, err = c.refreshTokenRepository.FindByToken(input.RefreshToken)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to extract claims"})
+		ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{Error: "Invalid refresh token"})
 		return
 	}
 
-	accessToken, err := utils.CreateAccessToken(claims["user_id"].(uint), claims["email"].(string))
+	claims, err := utils.ExtractClaims(input.RefreshToken)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to extract claims"})
+		ctx.Abort()
+		return
+	}
+
+	userID, ok := claims["user_id"].(uint)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to extract user ID from claims"})
+		ctx.Abort()
+		return
+	}
+
+	email, ok := claims["email"].(string)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to extract email from claims"})
+		ctx.Abort()
+		return
+	}
+
+	accessToken, err := utils.CreateAccessToken(userID, email)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to create access token"})
 		return
@@ -175,56 +195,5 @@ func (c *AuthController) ReauthenticateHandler(ctx *gin.Context) {
 		Data: types.TokenResponse{
 			AccessToken: accessToken,
 		},
-	})
-}
-
-func (c *AuthController) DisableUserHandler(ctx *gin.Context) {
-	userIDParam := ctx.Param("id")
-	userID, err := strconv.ParseUint(userIDParam, 10, 32)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "Invalid user ID"})
-		return
-	}
-
-	user, err := c.userRepository.FindByID(uint(userID))
-	if err != nil {
-		ctx.JSON(http.StatusNotFound, types.ErrorResponse{Error: "User not found"})
-		return
-	}
-
-	user.IsActive = false
-	_, err = c.userRepository.Update(user)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to disable user"})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, types.SuccessResponse{
-		Message: "User disabled successfully",
-	})
-}
-
-func (c *AuthController) DeleteUserHandler(ctx *gin.Context) {
-	userIDParam := ctx.Param("id")
-	userID, err := strconv.ParseUint(userIDParam, 10, 32)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "Invalid user ID"})
-		return
-	}
-
-	user, err := c.userRepository.FindByID(uint(userID))
-	if err != nil {
-		ctx.JSON(http.StatusNotFound, types.ErrorResponse{Error: "User not found"})
-		return
-	}
-
-	_, err = c.userRepository.Delete(user)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "Failed to delete user"})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, types.SuccessResponse{
-		Message: "User deleted successfully",
 	})
 }
