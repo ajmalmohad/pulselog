@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"pulselog/auth/models"
 
 	"gorm.io/driver/postgres"
@@ -27,13 +26,11 @@ func InitDatabase() (*gorm.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to the database: %v", err)
 	}
-	log.Println("Connected to the database successfully!")
 
 	err = db.AutoMigrate(&models.User{}, &models.RefreshToken{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to migrate database: %v", err)
 	}
-	log.Println("Database migrated successfully!")
 
 	return db, nil
 }
