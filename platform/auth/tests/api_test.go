@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http/httptest"
 	"os"
+	"pulselog/auth/config"
 	"pulselog/auth/models"
 	"pulselog/auth/routes"
 	"testing"
@@ -28,6 +29,11 @@ func mockDB() (*gorm.DB, error) {
 }
 
 func setup() (*httptest.Server, error) {
+	err := config.LoadEnvironmentVars("../.env")
+	if err != nil {
+		return nil, err
+	}
+
 	db, err := mockDB()
 	if err != nil {
 		return nil, err
