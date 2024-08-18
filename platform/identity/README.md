@@ -1,6 +1,6 @@
-# pulselog auth
+# pulselog identity
 
-Simple authentication microservice that can handle various types of authentication. It is a standalone service that returns JWT that can be used to access other client facing services of pulselog
+Simple authentication and project management microservice that can handle user authentication, authorization, project creation, team management etc....
 
 # Libraries used
 - Gin (https://github.com/gin-gonic/gin)
