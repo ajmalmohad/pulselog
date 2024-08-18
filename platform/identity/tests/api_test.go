@@ -27,7 +27,13 @@ func mockDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&models.User{}, &models.RefreshToken{})
+	err = db.AutoMigrate(
+		&models.User{},
+		&models.RefreshToken{},
+		&models.Project{},
+		&models.APIKey{},
+		&models.ProjectMember{},
+	)
 	if err != nil {
 		return nil, err
 	}
