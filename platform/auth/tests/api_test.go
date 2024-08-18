@@ -199,6 +199,7 @@ func deleteUser(t *testing.T, accessToken string) {
 }
 
 func TestSignUp(t *testing.T) {
+	// Initial Sign-Up
 	accessToken, _ := signUpUser(t, "testuser@example.com", "password123")
 
 	// Duplicate Sign-Up
@@ -220,6 +221,7 @@ func TestSignUp(t *testing.T) {
 }
 
 func TestLogIn(t *testing.T) {
+	// Initial Sign-Up
 	accessToken, _ := signUpUser(t, "testuser@example.com", "password123")
 
 	// Initial Log-In
@@ -243,9 +245,8 @@ func TestLogIn(t *testing.T) {
 }
 
 func TestReauthenticate(t *testing.T) {
-	accessToken, _ := signUpUser(t, "testuser@example.com", "password123")
-
-	_, refreshToken := logInUser(t, "testuser@example.com", "password123")
+	// Initial Sign-Up
+	accessToken, refreshToken := signUpUser(t, "testuser@example.com", "password123")
 
 	// Reauthenticate
 	reauthenticateUser(t, refreshToken)
