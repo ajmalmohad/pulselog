@@ -26,7 +26,7 @@ func (r *genericRepository[T]) Create(entity *T) (*T, error) {
 }
 
 func (r *genericRepository[T]) Update(entity *T) (*T, error) {
-	result := r.db.Model(entity).Updates(entity)
+	result := r.db.Save(entity)
 	return entity, result.Error
 }
 
