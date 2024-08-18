@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"pulselog/auth/config"
+	"pulselog/identity/config"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"

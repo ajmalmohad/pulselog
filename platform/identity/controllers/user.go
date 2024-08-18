@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"net/http"
-	"pulselog/auth/repositories"
-	"pulselog/auth/types"
+	"pulselog/identity/repositories"
+	"pulselog/identity/types"
 
 	"github.com/gin-gonic/gin"
 )

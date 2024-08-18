@@ -1,4 +1,4 @@
-module pulselog/auth
+module pulselog/identity
 
 go 1.23.0
 

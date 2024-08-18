@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"pulselog/auth/models"
+	"pulselog/identity/models"
 
 	"gorm.io/gorm"
 )

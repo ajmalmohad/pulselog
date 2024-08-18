@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"pulselog/auth/models"
+	"pulselog/identity/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

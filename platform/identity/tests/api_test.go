@@ -11,9 +11,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"pulselog/auth/config"
-	"pulselog/auth/models"
-	"pulselog/auth/routes"
+	"pulselog/identity/config"
+	"pulselog/identity/models"
+	"pulselog/identity/routes"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -47,7 +47,8 @@ func setup(port string) (*httptest.Server, error) {
 	}
 
 	router := gin.Default()
-	routes.SetupRoutes(router, db)
+	routes.SetupAuthRoutes(router, db)
+	routes.SetupUserRoutes(router, db)
 
 	server := httptest.NewUnstartedServer(router)
 

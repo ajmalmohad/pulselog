@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"net/http"
-	"pulselog/auth/types"
-	"pulselog/auth/utils"
+	"pulselog/identity/types"
+	"pulselog/identity/utils"
 	"strings"
 
 	"github.com/gin-gonic/gin"

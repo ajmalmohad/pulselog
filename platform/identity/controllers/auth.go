@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"net/http"
-	"pulselog/auth/models"
-	"pulselog/auth/repositories"
-	"pulselog/auth/types"
-	"pulselog/auth/utils"
+	"pulselog/identity/models"
+	"pulselog/identity/repositories"
+	"pulselog/identity/types"
+	"pulselog/identity/utils"
 	"time"
 
 	"github.com/gin-gonic/gin"
