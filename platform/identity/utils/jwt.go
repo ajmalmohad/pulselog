@@ -44,7 +44,26 @@ func VerifyToken(tokenString string) error {
 	return nil
 }
 
-func ExtractClaims(tokenString string) (jwt.MapClaims, error) {
+func ExtractUserIDAndEmailFromClaims(tokenString string) (uint, string, error) {
+	claims, err := extractClaims(tokenString)
+	if err != nil {
+		return 0, "", err
+	}
+
+	userIDFloat, ok := claims["user_id"].(float64)
+	if !ok {
+		return 0, "", fmt.Errorf("failed to extract user ID from claims")
+	}
+
+	email, ok := claims["email"].(string)
+	if !ok {
+		return 0, "", fmt.Errorf("failed to extract email from claims")
+	}
+
+	return uint(userIDFloat), email, nil
+}
+
+func extractClaims(tokenString string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte(config.AppConfig.JWTSecret), nil
 	})
@@ -59,18 +78,4 @@ func ExtractClaims(tokenString string) (jwt.MapClaims, error) {
 	}
 
 	return claims, nil
-}
-
-func ExtractUserIDAndEmailFromClaims(claims map[string]interface{}) (uint, string, error) {
-	userIDFloat, ok := claims["user_id"].(float64)
-	if !ok {
-		return 0, "", fmt.Errorf("failed to extract user ID from claims")
-	}
-
-	email, ok := claims["email"].(string)
-	if !ok {
-		return 0, "", fmt.Errorf("failed to extract email from claims")
-	}
-
-	return uint(userIDFloat), email, nil
 }

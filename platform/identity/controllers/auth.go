@@ -207,17 +207,7 @@ func (c *AuthController) ReauthenticateHandler(ctx *gin.Context) {
 		return
 	}
 
-	claims, err := utils.ExtractClaims(input.RefreshToken)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
-			Error:  "Failed to extract claims",
-			Detail: err.Error(),
-		})
-		ctx.Abort()
-		return
-	}
-
-	userID, email, err := utils.ExtractUserIDAndEmailFromClaims(claims)
+	userID, email, err := utils.ExtractUserIDAndEmailFromClaims(input.RefreshToken)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
 			Error:  "Failed to extract user ID and email from claims",
