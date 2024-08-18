@@ -2,12 +2,10 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type RefreshToken struct {
-	gorm.Model
+	Base
 
 	UserID    uint      `gorm:"not null;index"`
 	Token     string    `gorm:"type:text;not null;unique"`
