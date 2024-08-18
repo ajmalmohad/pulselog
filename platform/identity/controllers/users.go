@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"pulselog/identity/repositories"
 	"pulselog/identity/types"
+	"pulselog/identity/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,16 +20,16 @@ func NewUserController(userRepository *repositories.UserRepository) *UserControl
 }
 
 func (u *UserController) DeleteUserHandler(ctx *gin.Context) {
-	userID, exists := ctx.Get("user_id")
-	if !exists {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
-			Error:  "User ID not provided",
-			Detail: "The user_id parameter is missing from the context",
+	userID, _, err := utils.ExtractClaimsFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to extract user ID and email from claims",
+			Detail: err.Error(),
 		})
 		return
 	}
 
-	user, err := u.userRepository.FindByID(userID.(uint))
+	user, err := u.userRepository.FindByID(userID)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, types.ErrorResponse{
 			Error:  "User not found",

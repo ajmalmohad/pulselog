@@ -37,17 +37,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		userID, email, err := utils.ExtractUserIDAndEmailFromClaims(tokenString)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
-				Error:  "Failed to extract user ID and email from claims",
-				Detail: err.Error(),
-			})
-			return
-		}
-
-		ctx.Set("user_id", userID)
-		ctx.Set("email", email)
+		utils.InjectClaimsToContext(ctx, tokenString)
 
 		ctx.Next()
 	}
