@@ -23,3 +23,13 @@ func (r *RefreshTokenRepository) FindByToken(token string) (*models.RefreshToken
 	result := r.db.Where("token = ?", token).First(&refreshToken)
 	return &refreshToken, result.Error
 }
+
+func (r *RefreshTokenRepository) DeleteByTokenAndUserID(token string, userID uint) error {
+	result := r.db.Where("token = ? AND user_id = ?", token, userID).Delete(&models.RefreshToken{})
+	return result.Error
+}
+
+func (r *RefreshTokenRepository) DeleteByUserID(userID uint) error {
+	result := r.db.Where("user_id = ?", userID).Delete(&models.RefreshToken{})
+	return result.Error
+}
