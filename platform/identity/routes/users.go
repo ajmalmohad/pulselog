@@ -15,5 +15,5 @@ func SetupUserRoutes(router *gin.Engine, db *gorm.DB) {
 	userRepository := repositories.NewUserRepository(db)
 	userController := controllers.NewUserController(userRepository)
 
-	userRouter.DELETE("/delete", userController.DeleteUserHandler)
+	userRouter.DELETE("", userController.DeleteUserHandler)
 }

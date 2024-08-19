@@ -13,16 +13,13 @@ import (
 
 type ProjectController struct {
 	projectRepository *repositories.ProjectRepository
-	userRepository    *repositories.UserRepository
 }
 
 func NewProjectController(
 	projectRepository *repositories.ProjectRepository,
-	userRepository *repositories.UserRepository,
 ) *ProjectController {
 	return &ProjectController{
 		projectRepository: projectRepository,
-		userRepository:    userRepository,
 	}
 }
 
@@ -48,18 +45,9 @@ func (c *ProjectController) CreateProject(ctx *gin.Context) {
 		return
 	}
 
-	user, err := c.userRepository.FindByID(userID)
-	if err != nil {
-		ctx.JSON(http.StatusNotFound, types.ErrorResponse{
-			Error:  "User not found",
-			Detail: err.Error(),
-		})
-		return
-	}
-
 	project := &models.Project{
 		Name:    input.Name,
-		OwnerID: user.ID,
+		OwnerID: userID,
 	}
 
 	if _, err := c.projectRepository.Create(project); err != nil {
