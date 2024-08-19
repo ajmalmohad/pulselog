@@ -53,11 +53,11 @@ func LoadEnvironmentVars(relativePath string) error {
 	config := Config{
 		JWTSecret: getEnv("JWT_SECRET"),
 		DB: DatabaseConfig{
-			DBHost:     getEnv("DB_HOST"),
-			DBPort:     getEnv("DB_PORT"),
-			DBUser:     getEnv("DB_USER"),
-			DBPassword: getEnv("DB_PASSWORD"),
-			DBName:     getEnv("DB_NAME"),
+			DBHost:     getEnv("IDENTITY_DB_HOST"),
+			DBPort:     getEnv("IDENTITY_DB_PORT"),
+			DBUser:     getEnv("IDENTITY_DB_USER"),
+			DBPassword: getEnv("IDENTITY_DB_PASSWORD"),
+			DBName:     getEnv("IDENTITY_DB_NAME"),
 		},
 	}
 

@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	err := config.LoadEnvironmentVars("")
+	err := config.LoadEnvironmentVars("../../.env")
 	if err != nil {
 		panic(err)
 	}

@@ -2,13 +2,14 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:13
+    image: postgres:16
+    container_name: identity-db
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${IDENTITY_DB_USER}
+      - POSTGRES_PASSWORD=${IDENTITY_DB_PASSWORD}
+      - POSTGRES_DB=${IDENTITY_DB_NAME}
     ports:
-      - "${DB_PORT}:5432"
+      - "${IDENTITY_DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
