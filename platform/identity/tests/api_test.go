@@ -42,10 +42,7 @@ func mockDB() (*gorm.DB, error) {
 }
 
 func setup(port string) (*httptest.Server, error) {
-	err := config.LoadEnvironmentVars("../../../.env")
-	if err != nil {
-		return nil, err
-	}
+	config.LoadEnvironmentVars()
 
 	db, err := mockDB()
 	if err != nil {
