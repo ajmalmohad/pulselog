@@ -6,11 +6,11 @@ import (
 	"pulselog/identity/repositories"
 	"pulselog/identity/types"
 	"pulselog/identity/utils"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
+// This require an auth middleware that injects the user ID and email into the context.
 func ProjectMiddleware(
 	projectRepository *repositories.ProjectRepository,
 	allowedRoles []models.Role,
@@ -26,17 +26,17 @@ func ProjectMiddleware(
 			return
 		}
 
-		projectID, err := strconv.ParseUint(ctx.Param("projectID"), 10, 64)
+		projectID, err := utils.GetProjectIDFromQuery(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
-				Error:  "Invalid project ID",
+				Error:  "Invalid request",
 				Detail: err.Error(),
 			})
 			ctx.Abort()
 			return
 		}
 
-		_, err = projectRepository.FindByIDUserAndRoles(uint(projectID), userID, allowedRoles)
+		_, err = projectRepository.FindByIDUserAndRoles(projectID, userID, allowedRoles)
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, types.ErrorResponse{
 				Error:  "Project not found or you are not authorized",
