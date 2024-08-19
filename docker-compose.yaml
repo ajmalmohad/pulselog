@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: identity-db
+    environment:
+      - POSTGRES_USER=${IDENTITY_DB_USER}
+      - POSTGRES_PASSWORD=${IDENTITY_DB_PASSWORD}
+      - POSTGRES_DB=${IDENTITY_DB_NAME}
+    ports:
+      - "${IDENTITY_DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  app:
+      container_name: identity-app
+      build:
+        context: ./platform/identity
+        dockerfile: Dockerfile
+      volumes:
+        - ./platform/identity:/app
+      ports:
+        - "8080:8080"
+      environment:
+        - GO_ENV=development
+        - IDENTITY_DB_USER=${IDENTITY_DB_USER}
+        - IDENTITY_DB_PASSWORD=${IDENTITY_DB_PASSWORD}
+        - IDENTITY_DB_NAME=${IDENTITY_DB_NAME}
+        - IDENTITY_DB_PORT=5432
+        - IDENTITY_DB_HOST=postgres
+        - JWT_SECRET=${JWT_SECRET}
+      networks:
+        - app-network
+      depends_on:
+        - postgres
+      command: ["air", "-c", ".air.toml"]
+
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

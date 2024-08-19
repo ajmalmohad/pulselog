@@ -3,7 +3,6 @@ package config
 import (
 	"log"
 	"os"
-	"path/filepath"
 
 	"github.com/joho/godotenv"
 )
@@ -31,36 +30,19 @@ type DatabaseConfig struct {
 	DBName     string
 }
 
-func LoadEnvironmentVars(relativePath string) error {
-	var err error
-
-	if relativePath == "" {
-		err = godotenv.Load()
-	} else {
-		var absPath string
-		absPath, err = filepath.Abs(relativePath)
-		if err != nil {
-			return err
-		}
-
-		err = godotenv.Load(absPath)
-	}
-
-	if err != nil {
-		return err
-	}
+func LoadEnvironmentVars() {
+	godotenv.Load()
 
 	config := Config{
 		JWTSecret: getEnv("JWT_SECRET"),
 		DB: DatabaseConfig{
-			DBHost:     getEnv("DB_HOST"),
-			DBPort:     getEnv("DB_PORT"),
-			DBUser:     getEnv("DB_USER"),
-			DBPassword: getEnv("DB_PASSWORD"),
-			DBName:     getEnv("DB_NAME"),
+			DBHost:     getEnv("IDENTITY_DB_HOST"),
+			DBPort:     getEnv("IDENTITY_DB_PORT"),
+			DBUser:     getEnv("IDENTITY_DB_USER"),
+			DBPassword: getEnv("IDENTITY_DB_PASSWORD"),
+			DBName:     getEnv("IDENTITY_DB_NAME"),
 		},
 	}
 
 	AppConfig = &config
-	return nil
 }
