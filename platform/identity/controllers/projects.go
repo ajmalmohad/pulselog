@@ -122,24 +122,16 @@ func (c *ProjectController) UpdateProject(ctx *gin.Context) {
 		return
 	}
 
-	projectID := ctx.Query("project_id")
-	if projectID == "" {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
-			Error: "Project ID is required",
-		})
-		return
-	}
-
-	pid, err := strconv.ParseUint(projectID, 10, 64)
+	projectID, err := utils.GetProjectIDFromQuery(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
-			Error:  "Invalid project ID",
+			Error:  "Invalid request",
 			Detail: err.Error(),
 		})
 		return
 	}
 
-	project, err := c.projectRepository.FindByID(uint(pid))
+	project, err := c.projectRepository.FindByID(projectID)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, types.ErrorResponse{
 			Error:  "Project not found",
@@ -167,24 +159,16 @@ func (c *ProjectController) UpdateProject(ctx *gin.Context) {
 }
 
 func (c *ProjectController) DeleteProject(ctx *gin.Context) {
-	projectID := ctx.Query("project_id")
-	if projectID == "" {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
-			Error: "Project ID is required",
-		})
-		return
-	}
-
-	pid, err := strconv.ParseUint(projectID, 10, 64)
+	projectID, err := utils.GetProjectIDFromQuery(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
-			Error:  "Invalid project ID",
+			Error:  "Invalid request",
 			Detail: err.Error(),
 		})
 		return
 	}
 
-	project, err := c.projectRepository.FindByID(uint(pid))
+	project, err := c.projectRepository.FindByID(projectID)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, types.ErrorResponse{
 			Error:  "Project not found",
