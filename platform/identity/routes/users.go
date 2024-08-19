@@ -11,8 +11,8 @@ import (
 
 func SetupUserRoutes(router *gin.Engine, db *gorm.DB) {
 	userRouter := router.Group("/users")
-	userRouter.Use(middleware.AuthMiddleware())
 	userRepository := repositories.NewUserRepository(db)
+	userRouter.Use(middleware.AuthMiddleware(userRepository))
 	userController := controllers.NewUserController(userRepository)
 
 	userRouter.DELETE("", userController.DeleteUserHandler)
