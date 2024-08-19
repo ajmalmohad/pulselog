@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:16
-    container_name: identity-db
+    container_name: identity-db-dev
     environment:
       - POSTGRES_USER=${IDENTITY_DB_USER}
       - POSTGRES_PASSWORD=${IDENTITY_DB_PASSWORD}
@@ -15,10 +15,10 @@ services:
     restart: unless-stopped
 
   app:
-      container_name: identity-app
+      container_name: identity-app-dev
       build:
         context: ./platform/identity
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.dev
       volumes:
         - ./platform/identity:/app
       ports:
