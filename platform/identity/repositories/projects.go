@@ -31,3 +31,15 @@ func (r *ProjectRepository) FindByIDUserAndRoles(projectID uint, userID uint, al
 	}
 	return &project, nil
 }
+
+func (r *ProjectRepository) FindAllByUserID(userID uint) ([]models.Project, error) {
+	var projects []models.Project
+	err := r.db.
+		Where("projects.owner_id = ? OR project_members.user_id = ?", userID, userID).
+		Joins("LEFT JOIN project_members ON project_members.project_id = projects.id").
+		Find(&projects).Error
+	if err != nil {
+		return nil, err
+	}
+	return projects, nil
+}
