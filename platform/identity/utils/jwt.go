@@ -3,12 +3,13 @@ package utils
 import (
 	"fmt"
 	"pulselog/identity/config"
+	"pulselog/identity/types"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func CreateToken(userId uint, email string, expiryDuration time.Duration) (string, error) {
+func createJWT(userId uint, email string, expiryDuration time.Duration) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": userId,
 		"email":   email,
@@ -25,11 +26,28 @@ func CreateToken(userId uint, email string, expiryDuration time.Duration) (strin
 }
 
 func CreateAccessToken(userId uint, email string) (string, error) {
-	return CreateToken(userId, email, time.Hour)
+	return createJWT(userId, email, time.Hour)
 }
 
 func CreateRefreshToken(userId uint, email string) (string, error) {
-	return CreateToken(userId, email, time.Hour*24*30)
+	return createJWT(userId, email, time.Hour*24*30)
+}
+
+func CreateTokens(userId uint, email string) (types.TokenResponse, error) {
+	accessToken, err := CreateAccessToken(userId, email)
+	if err != nil {
+		return types.TokenResponse{}, err
+	}
+
+	refreshToken, err := CreateRefreshToken(userId, email)
+	if err != nil {
+		return types.TokenResponse{}, err
+	}
+
+	return types.TokenResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
 }
 
 func VerifyToken(tokenString string) error {

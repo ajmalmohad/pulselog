@@ -62,19 +62,10 @@ func (c *AuthController) SignupHandler(ctx *gin.Context) {
 		return
 	}
 
-	accessToken, err := utils.CreateAccessToken(user.ID, user.Email)
+	tokens, err := utils.CreateTokens(user.ID, user.Email)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
-			Error:  "Failed to create access token",
-			Detail: err.Error(),
-		})
-		return
-	}
-
-	refreshToken, err := utils.CreateRefreshToken(user.ID, user.Email)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
-			Error:  "Failed to create refresh token",
+			Error:  "Failed to create tokens",
 			Detail: err.Error(),
 		})
 		return
@@ -82,7 +73,7 @@ func (c *AuthController) SignupHandler(ctx *gin.Context) {
 
 	refreshTokenModel := &models.RefreshToken{
 		UserID:    user.ID,
-		Token:     refreshToken,
+		Token:     tokens.RefreshToken,
 		ExpiresAt: time.Now().Add(30 * 24 * time.Hour),
 	}
 
@@ -97,10 +88,7 @@ func (c *AuthController) SignupHandler(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, types.SuccessResponse{
 		Message: "User created successfully",
-		Data: types.TokenResponse{
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-		},
+		Data:    tokens,
 	})
 }
 
@@ -134,19 +122,10 @@ func (c *AuthController) LoginHandler(ctx *gin.Context) {
 		return
 	}
 
-	accessToken, err := utils.CreateAccessToken(user.ID, user.Email)
+	tokens, err := utils.CreateTokens(user.ID, user.Email)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
-			Error:  "Failed to create access token",
-			Detail: err.Error(),
-		})
-		return
-	}
-
-	refreshToken, err := utils.CreateRefreshToken(user.ID, user.Email)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
-			Error:  "Failed to create refresh token",
+			Error:  "Failed to create tokens",
 			Detail: err.Error(),
 		})
 		return
@@ -154,7 +133,7 @@ func (c *AuthController) LoginHandler(ctx *gin.Context) {
 
 	refreshTokenModel := &models.RefreshToken{
 		UserID:    user.ID,
-		Token:     refreshToken,
+		Token:     tokens.RefreshToken,
 		ExpiresAt: time.Now().Add(30 * 24 * time.Hour),
 	}
 
@@ -169,10 +148,7 @@ func (c *AuthController) LoginHandler(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, types.SuccessResponse{
 		Message: "Login successful",
-		Data: types.TokenResponse{
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-		},
+		Data:    tokens,
 	})
 }
 
