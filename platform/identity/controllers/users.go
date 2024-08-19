@@ -49,5 +49,6 @@ func (u *UserController) DeleteUserHandler(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, types.SuccessResponse{
 		Message: "User deleted successfully",
+		Data:    user,
 	})
 }
