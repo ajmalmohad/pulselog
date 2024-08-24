@@ -41,7 +41,18 @@ func mockDB() (*gorm.DB, error) {
 	return db, nil
 }
 
+func mockEnvs() {
+	os.Setenv("IDENTITY_DB_USER", "test_user")
+	os.Setenv("IDENTITY_DB_PASSWORD", "test_password")
+	os.Setenv("IDENTITY_DB_NAME", "test_db")
+	os.Setenv("IDENTITY_DB_PORT", "5432")
+	os.Setenv("IDENTITY_DB_HOST", "localhost")
+	os.Setenv("JWT_SECRET", "super_secret_jwt_key")
+}
+
 func setup(port string) (*httptest.Server, error) {
+	mockEnvs()
+
 	config.LoadEnvironmentVars()
 
 	db, err := mockDB()
@@ -194,7 +205,7 @@ func deleteUser(t *testing.T, accessToken string) {
 		"Authorization": "Bearer " + accessToken,
 	}
 
-	resp := makeRequest(t, "DELETE", "http://localhost:4000/users/delete", nil, headers)
+	resp := makeRequest(t, "DELETE", "http://localhost:4000/users", nil, headers)
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
