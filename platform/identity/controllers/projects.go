@@ -11,14 +11,17 @@ import (
 )
 
 type ProjectController struct {
-	projectRepository *repositories.ProjectRepository
+	projectRepository       *repositories.ProjectRepository
+	projectMemberRepository *repositories.ProjectMemberRepository
 }
 
 func NewProjectController(
 	projectRepository *repositories.ProjectRepository,
+	projectMemberRepository *repositories.ProjectMemberRepository,
 ) *ProjectController {
 	return &ProjectController{
-		projectRepository: projectRepository,
+		projectRepository:       projectRepository,
+		projectMemberRepository: projectMemberRepository,
 	}
 }
 
@@ -52,6 +55,20 @@ func (c *ProjectController) CreateProject(ctx *gin.Context) {
 	if _, err := c.projectRepository.Create(project); err != nil {
 		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
 			Error:  "Failed to create project",
+			Detail: err.Error(),
+		})
+		return
+	}
+
+	projectMember := &models.ProjectMember{
+		ProjectID: project.ID,
+		UserID:    userID,
+		Role:      models.ADMIN,
+	}
+
+	if _, err := c.projectMemberRepository.Create(projectMember); err != nil {
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to create project member",
 			Detail: err.Error(),
 		})
 		return
