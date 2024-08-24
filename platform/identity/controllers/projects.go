@@ -47,6 +47,7 @@ func (c *ProjectController) CreateProject(ctx *gin.Context) {
 		return
 	}
 
+	// TODO: Make the creation of project and project member a transaction
 	project := &models.Project{
 		Name:    input.Name,
 		OwnerID: userID,
