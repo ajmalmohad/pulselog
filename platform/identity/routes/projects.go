@@ -18,7 +18,7 @@ func SetupProjectRoutes(router *gin.Engine, db *gorm.DB) {
 	projectController := controllers.NewProjectController(projectRepository, projectMemberRepository)
 
 	projectRouter.POST("", projectController.CreateProject)
-	projectRouter.GET("/all", projectController.GetAllProjects)
+	projectRouter.GET("/all", projectController.GetAllProjects) // Gets all projects that the user is a member of
 	projectRouter.GET("", middleware.ProjectMemberOnly(projectRepository), projectController.GetProject)
 	projectRouter.PUT("", middleware.ProjectAdminOnly(projectRepository), projectController.UpdateProject)
 	projectRouter.DELETE("", middleware.ProjectAdminOnly(projectRepository), projectController.DeleteProject)

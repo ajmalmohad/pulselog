@@ -17,3 +17,12 @@ func NewProjectMemberRepository(db *gorm.DB) *ProjectMemberRepository {
 		db:                db,
 	}
 }
+
+func (r *ProjectMemberRepository) FindAllByProjectID(projectID uint) ([]models.ProjectMember, error) {
+	var projectMembers []models.ProjectMember
+	err := r.db.
+		Where("project_id = ?", projectID).
+		Find(&projectMembers).
+		Error
+	return projectMembers, err
+}
