@@ -20,7 +20,7 @@ services:
       context: ./platform/identity
       dockerfile: Dockerfile.prod
     ports:
-      - "8080:8080"
+      - "4000:8080"
     environment:
       - GO_ENV=production
       - IDENTITY_DB_USER=${IDENTITY_DB_USER}
