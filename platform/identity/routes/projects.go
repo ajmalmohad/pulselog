@@ -13,8 +13,9 @@ func SetupProjectRoutes(router *gin.Engine, db *gorm.DB) {
 	projectRouter := router.Group("/projects")
 	userRepository := repositories.NewUserRepository(db)
 	projectRepository := repositories.NewProjectRepository(db)
+	projectMemberRepository := repositories.NewProjectMemberRepository(db)
 	projectRouter.Use(middleware.AuthMiddleware(userRepository))
-	projectController := controllers.NewProjectController(projectRepository)
+	projectController := controllers.NewProjectController(projectRepository, projectMemberRepository)
 
 	projectRouter.POST("", projectController.CreateProject)
 	projectRouter.GET("/all", projectController.GetAllProjects)
