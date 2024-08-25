@@ -20,6 +20,7 @@ func main() {
 	routes.SetupAuthRoutes(router, db)
 	routes.SetupUserRoutes(router, db)
 	routes.SetupProjectRoutes(router, db)
+	routes.SetupProjectMemberRoutes(router, db)
 
 	if err := router.Run(":8080"); err != nil {
 		log.Fatalf("Could not start server: %v", err)

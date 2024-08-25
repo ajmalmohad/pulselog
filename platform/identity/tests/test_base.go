@@ -60,6 +60,8 @@ func setup(port string) (*httptest.Server, error) {
 	router := gin.Default()
 	routes.SetupAuthRoutes(router, db)
 	routes.SetupUserRoutes(router, db)
+	routes.SetupProjectRoutes(router, db)
+	routes.SetupProjectMemberRoutes(router, db)
 
 	server := httptest.NewUnstartedServer(router)
 
