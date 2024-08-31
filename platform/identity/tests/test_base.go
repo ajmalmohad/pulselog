@@ -105,7 +105,7 @@ func makeRequest(t *testing.T, method, url string, payload interface{}, headers 
 }
 
 func TestMain(m *testing.M) {
-	server, err := setup("4000")
+	server, err := setup("9876")
 	if err != nil {
 		log.Fatalf("Setup failed: %v", err)
 	}
