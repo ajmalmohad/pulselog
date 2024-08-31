@@ -2,9 +2,14 @@ package tests
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
+	"os"
 	"testing"
 )
+
+const port = "9876"
+const baseURL = "http://localhost:" + port
 
 func signUpUser(t *testing.T, email, password string) (string, string) {
 	signUpPayload := map[string]string{
@@ -13,7 +18,7 @@ func signUpUser(t *testing.T, email, password string) (string, string) {
 		"email":    email,
 	}
 
-	resp := makeRequest(t, "POST", "http://localhost:4000/auth/signup", signUpPayload, nil)
+	resp := makeRequest(t, "POST", baseURL+"/auth/signup", signUpPayload, nil)
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusCreated {
@@ -41,7 +46,7 @@ func logInUser(t *testing.T, email, password string) (string, string) {
 		"email":    email,
 	}
 
-	resp := makeRequest(t, "POST", "http://localhost:4000/auth/login", loginPayload, nil)
+	resp := makeRequest(t, "POST", baseURL+"/auth/login", loginPayload, nil)
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
@@ -68,7 +73,7 @@ func reauthenticateUser(t *testing.T, refreshToken string) (string, string) {
 		"refresh_token": refreshToken,
 	}
 
-	resp := makeRequest(t, "POST", "http://localhost:4000/auth/reauthenticate", reauthPayload, nil)
+	resp := makeRequest(t, "POST", baseURL+"/auth/reauthenticate", reauthPayload, nil)
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
@@ -95,12 +100,23 @@ func deleteUser(t *testing.T, accessToken string) {
 		"Authorization": "Bearer " + accessToken,
 	}
 
-	resp := makeRequest(t, "DELETE", "http://localhost:4000/users", nil, headers)
+	resp := makeRequest(t, "DELETE", baseURL+"/users", nil, headers)
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, resp.StatusCode)
 	}
+}
+
+func TestMain(m *testing.M) {
+	server, err := setup(port)
+	if err != nil {
+		log.Fatalf("Setup failed: %v", err)
+	}
+	defer server.Close()
+
+	code := m.Run()
+	os.Exit(code)
 }
 
 func TestSignUp(t *testing.T) {
@@ -114,7 +130,7 @@ func TestSignUp(t *testing.T) {
 		"email":    "testuser@example.com",
 	}
 
-	resp := makeRequest(t, "POST", "http://localhost:4000/auth/signup", signUpPayload, nil)
+	resp := makeRequest(t, "POST", baseURL+"/auth/signup", signUpPayload, nil)
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusInternalServerError {
@@ -138,7 +154,7 @@ func TestLogIn(t *testing.T) {
 		"email":    "testuser@example.com",
 	}
 
-	resp := makeRequest(t, "POST", "http://localhost:4000/auth/login", loginPayload, nil)
+	resp := makeRequest(t, "POST", baseURL+"/auth/login", loginPayload, nil)
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusUnauthorized {
@@ -161,7 +177,7 @@ func TestReauthenticate(t *testing.T) {
 		"refresh_token": "wrongtoken",
 	}
 
-	resp := makeRequest(t, "POST", "http://localhost:4000/auth/reauthenticate", reauthPayload, nil)
+	resp := makeRequest(t, "POST", baseURL+"/auth/reauthenticate", reauthPayload, nil)
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusUnauthorized {
