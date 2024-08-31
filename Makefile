@@ -16,3 +16,6 @@ test-identity:
 
 clean-identity:
 	cd $(IDENTITY_BINARY_DIR) && rm -rf ./$(BUILD_DIR)
+
+dev:
+	docker-compose -f docker-compose.dev.yaml --env-file .env up
