@@ -112,3 +112,22 @@ func CreateAPIToken(userId uint, projectId uint) (string, error) {
 
 	return tokenString, nil
 }
+
+func ExtractUserIDAndProjectIDFromClaims(tokenString string) (uint, uint, error) {
+	claims, err := extractClaims(tokenString)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	userIDFloat, ok := claims["user_id"].(float64)
+	if !ok {
+		return 0, 0, fmt.Errorf("failed to extract user ID from claims")
+	}
+
+	projectIDFloat, ok := claims["project_id"].(float64)
+	if !ok {
+		return 0, 0, fmt.Errorf("failed to extract project ID from claims")
+	}
+
+	return uint(userIDFloat), uint(projectIDFloat), nil
+}
