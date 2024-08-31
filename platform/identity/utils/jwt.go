@@ -97,3 +97,18 @@ func extractClaims(tokenString string) (jwt.MapClaims, error) {
 
 	return claims, nil
 }
+
+func CreateAPIToken(userId uint, projectId uint) (string, error) {
+	claims := jwt.MapClaims{
+		"user_id":    userId,
+		"project_id": projectId,
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(config.AppConfig.JWTSecret))
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
+}
