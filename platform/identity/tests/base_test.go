@@ -3,6 +3,7 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -104,4 +105,15 @@ func makeRequest(t *testing.T, method, url string, payload interface{}, headers 
 	}
 
 	return resp
+}
+
+func TestMain(m *testing.M) {
+	server, err := setup(port)
+	if err != nil {
+		log.Fatalf("Setup failed: %v", err)
+	}
+	defer server.Close()
+
+	code := m.Run()
+	os.Exit(code)
 }

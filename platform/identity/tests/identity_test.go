@@ -2,9 +2,7 @@ package tests
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
-	"os"
 	"testing"
 )
 
@@ -90,17 +88,6 @@ func reauthenticateUser(t *testing.T, refreshToken string) (string, string) {
 	}
 
 	return reauthResponse.Data.AccessToken, reauthResponse.Data.RefreshToken
-}
-
-func TestMain(m *testing.M) {
-	server, err := setup(port)
-	if err != nil {
-		log.Fatalf("Setup failed: %v", err)
-	}
-	defer server.Close()
-
-	code := m.Run()
-	os.Exit(code)
 }
 
 func TestSignUp(t *testing.T) {
