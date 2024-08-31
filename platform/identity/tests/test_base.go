@@ -17,6 +17,9 @@ import (
 	"gorm.io/gorm"
 )
 
+const port = "9876"
+const baseURL = "http://localhost:" + port
+
 func mockDB() (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {

@@ -8,9 +8,6 @@ import (
 	"testing"
 )
 
-const port = "9876"
-const baseURL = "http://localhost:" + port
-
 func signUpUser(t *testing.T, email, password string) (string, string) {
 	signUpPayload := map[string]string{
 		"name":     "testuser",
@@ -95,19 +92,6 @@ func reauthenticateUser(t *testing.T, refreshToken string) (string, string) {
 	return reauthResponse.Data.AccessToken, reauthResponse.Data.RefreshToken
 }
 
-func deleteUser(t *testing.T, accessToken string) {
-	headers := map[string]string{
-		"Authorization": "Bearer " + accessToken,
-	}
-
-	resp := makeRequest(t, "DELETE", baseURL+"/users", nil, headers)
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("Expected status code %d, got %d", http.StatusOK, resp.StatusCode)
-	}
-}
-
 func TestMain(m *testing.M) {
 	server, err := setup(port)
 	if err != nil {
@@ -185,12 +169,5 @@ func TestReauthenticate(t *testing.T) {
 	}
 
 	// Clean-Up
-	deleteUser(t, accessToken)
-}
-
-func TestDeleteUser(t *testing.T) {
-	accessToken, _ := signUpUser(t, "testuser@example.com", "password123")
-
-	// Delete User
 	deleteUser(t, accessToken)
 }
