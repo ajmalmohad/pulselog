@@ -75,7 +75,7 @@ func (c *ProjectController) CreateProject(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, types.SuccessResponse{
+	ctx.JSON(http.StatusCreated, types.SuccessResponse{
 		Message: "Project created successfully",
 		Data:    project,
 	})
