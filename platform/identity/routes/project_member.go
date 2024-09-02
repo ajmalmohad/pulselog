@@ -18,9 +18,7 @@ func SetupProjectMemberRoutes(router *gin.Engine, db *gorm.DB) {
 
 	projectMemberRouter.POST("", projectMemberController.CreateProjectMember)
 	projectMemberRouter.GET("/all", projectMemberController.GetAllProjectMembers) // Gets all project members by project id
-	// TODO: Add access control to this routes (to get access to a project member user have to be in same project)
-	projectMemberRouter.GET("", projectMemberController.GetProjectMember)
-	// TODO: These are accessible by project admins only
-	projectMemberRouter.PUT("", projectMemberController.UpdateProjectMember)
-	projectMemberRouter.DELETE("", projectMemberController.DeleteProjectMember)
+	projectMemberRouter.GET("", middleware.SameProjectMemberOnly(projectMemberRepository), projectMemberController.GetProjectMember)
+	projectMemberRouter.PUT("", middleware.SameProjectAdminOnly(projectMemberRepository), projectMemberController.UpdateProjectMember)
+	projectMemberRouter.DELETE("", middleware.SameProjectAdminOnly(projectMemberRepository), projectMemberController.DeleteProjectMember)
 }
