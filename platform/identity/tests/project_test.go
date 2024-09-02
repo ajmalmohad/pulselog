@@ -134,10 +134,73 @@ func TestGetProject(t *testing.T) {
 
 	resp = makeRequest(t, "GET", baseURL+"/projects?project_id="+projectIDStr, nil, headers2)
 
-	if resp.StatusCode != http.StatusNotFound {
-		t.Errorf("Expected status code %d, got %d", http.StatusNotFound, resp.StatusCode)
+	if resp.StatusCode != http.StatusUnauthorized {
+		t.Errorf("Expected status code %d, got %d", http.StatusUnauthorized, resp.StatusCode)
 	}
 
 	// Cleanup
 	deleteUser(t, accessToken)
+}
+
+func TestUpdateProject(t *testing.T) {
+	// Initial Sign Up
+	accessToken, _ := signUpUser(t, "testuser@example.com", "password123")
+
+	// Create Project
+	projectID := createProject(t, accessToken)
+
+	// Update Project
+	headers := map[string]string{
+		"Authorization": "Bearer " + accessToken,
+	}
+
+	updateProjectPayload := map[string]string{
+		"name": "Updated Project",
+	}
+
+	projectIDStr := strconv.FormatUint(uint64(projectID), 10)
+
+	resp := makeRequest(t, "PUT", baseURL+"/projects?project_id="+projectIDStr, updateProjectPayload, headers)
+
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, resp.StatusCode)
+	}
+
+	// Get Project
+	resp = makeRequest(t, "GET", baseURL+"/projects?project_id="+projectIDStr, nil, headers)
+
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, resp.StatusCode)
+	}
+
+	var getProjectResponse struct {
+		Message string `json:"message"`
+		Data    models.Project
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&getProjectResponse); err != nil {
+		t.Fatalf("Failed to decode get project response: %v", err)
+	}
+
+	// Check response
+	if getProjectResponse.Data.Name != "Updated Project" {
+		t.Errorf("Expected project name to be Updated Project, got %s", getProjectResponse.Data.Name)
+	}
+
+	accessToken2, _ := signUpUser(t, "testuser2@gmail.com", "password123")
+
+	// Update Project with another user
+	headers2 := map[string]string{
+		"Authorization": "Bearer " + accessToken2,
+	}
+
+	resp = makeRequest(t, "PUT", baseURL+"/projects?project_id="+projectIDStr, updateProjectPayload, headers2)
+
+	if resp.StatusCode != http.StatusUnauthorized {
+		t.Errorf("Expected status code %d, got %d", http.StatusUnauthorized, resp.StatusCode)
+	}
+
+	// Cleanup
+	deleteUser(t, accessToken)
+	deleteUser(t, accessToken2)
 }

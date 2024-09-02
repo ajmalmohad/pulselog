@@ -38,7 +38,7 @@ func ProjectMiddleware(
 
 		_, err = projectRepository.FindByIDUserAndRoles(projectID, userID, allowedRoles)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, types.ErrorResponse{
+			ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{
 				Error:  "Project not found or you are not authorized",
 				Detail: err.Error(),
 			})
