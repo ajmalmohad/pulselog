@@ -204,3 +204,34 @@ func TestUpdateProject(t *testing.T) {
 	deleteUser(t, accessToken)
 	deleteUser(t, accessToken2)
 }
+
+func TestDeleteProject(t *testing.T) {
+	// Initial Sign Up
+	accessToken, _ := signUpUser(t, "testuser@example.com", "password123")
+
+	// Create Project
+	projectID := createProject(t, accessToken)
+
+	// Delete Project
+	headers := map[string]string{
+		"Authorization": "Bearer " + accessToken,
+	}
+
+	projectIDStr := strconv.FormatUint(uint64(projectID), 10)
+
+	resp := makeRequest(t, "DELETE", baseURL+"/projects?project_id="+projectIDStr, nil, headers)
+
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, resp.StatusCode)
+	}
+
+	// Get Project
+	resp = makeRequest(t, "GET", baseURL+"/projects?project_id="+projectIDStr, nil, headers)
+
+	if resp.StatusCode != http.StatusUnauthorized {
+		t.Errorf("Expected status code %d, got %d", http.StatusUnauthorized, resp.StatusCode)
+	}
+
+	// Cleanup
+	deleteUser(t, accessToken)
+}
