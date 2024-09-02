@@ -12,9 +12,10 @@ import (
 func SetupProjectMemberRoutes(router *gin.Engine, db *gorm.DB) {
 	projectMemberRouter := router.Group("/project-members")
 	userRepository := repositories.NewUserRepository(db)
+	projectRepository := repositories.NewProjectRepository(db)
 	projectMemberRepository := repositories.NewProjectMemberRepository(db)
 	projectMemberRouter.Use(middleware.AuthMiddleware(userRepository))
-	projectMemberController := controllers.NewProjectMemberController(projectMemberRepository)
+	projectMemberController := controllers.NewProjectMemberController(projectRepository, projectMemberRepository)
 
 	projectMemberRouter.POST("", projectMemberController.CreateProjectMember)
 	projectMemberRouter.GET("/all", projectMemberController.GetAllProjectMembers) // Gets all project members by project id

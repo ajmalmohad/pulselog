@@ -11,11 +11,16 @@ import (
 )
 
 type ProjectMemberController struct {
+	projectRepository       *repositories.ProjectRepository
 	projectMemberRepository *repositories.ProjectMemberRepository
 }
 
-func NewProjectMemberController(projectMemberRepository *repositories.ProjectMemberRepository) *ProjectMemberController {
+func NewProjectMemberController(
+	projectRepository *repositories.ProjectRepository,
+	projectMemberRepository *repositories.ProjectMemberRepository,
+) *ProjectMemberController {
 	return &ProjectMemberController{
+		projectRepository:       projectRepository,
 		projectMemberRepository: projectMemberRepository,
 	}
 }
@@ -31,6 +36,33 @@ func (c *ProjectMemberController) CreateProjectMember(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
 			Error:  "Invalid request body",
 			Detail: err.Error(),
+		})
+		return
+	}
+
+	userID, _, err := utils.ExtractClaimsFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to extract user ID and email from claims",
+			Detail: err.Error(),
+		})
+		ctx.Abort()
+		return
+	}
+
+	isOwner, err := c.projectRepository.IsOwner(input.ProjectID, userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to check if user is owner of project",
+			Detail: err.Error(),
+		})
+		return
+	}
+
+	if !isOwner {
+		ctx.JSON(http.StatusUnauthorized, types.ErrorResponse{
+			Error:  "You are not authorized to create project members",
+			Detail: "Owner access required",
 		})
 		return
 	}

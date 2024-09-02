@@ -44,3 +44,17 @@ func (r *ProjectRepository) FindAllByUserID(userID uint) ([]models.Project, erro
 	}
 	return projects, nil
 }
+
+func (r *ProjectRepository) IsOwner(projectID uint, userID uint) (bool, error) {
+	var project models.Project
+	err := r.db.
+		Where("projects.id = ?", projectID).
+		Where("project_members.user_id = ?", userID).
+		Where("project_members.role = ?", models.ADMIN).
+		Joins("LEFT JOIN project_members ON project_members.project_id = projects.id").
+		First(&project).Error
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
