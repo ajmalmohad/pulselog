@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"pulselog/identity/models"
+	"strconv"
 	"testing"
 )
 
@@ -97,6 +98,44 @@ func TestGetAllProjects(t *testing.T) {
 	// Check response
 	if len(projects) != 1 {
 		t.Errorf("Expected at least one project, got %d", len(projects))
+	}
+
+	// Cleanup
+	deleteUser(t, accessToken)
+}
+
+func TestGetProject(t *testing.T) {
+	// Initial Sign Up
+	accessToken, _ := signUpUser(t, "testuser@example.com", "password123")
+
+	// Create Project
+	projectID := createProject(t, accessToken)
+
+	// Get Project
+	headers := map[string]string{
+		"Authorization": "Bearer " + accessToken,
+	}
+
+	projectIDStr := strconv.FormatUint(uint64(projectID), 10)
+
+	resp := makeRequest(t, "GET", baseURL+"/projects?project_id="+projectIDStr, nil, headers)
+
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, resp.StatusCode)
+	}
+
+	// Create Another User
+	accessToken2, _ := signUpUser(t, "testuser2@example.com", "password123")
+
+	// Get Project with another user
+	headers2 := map[string]string{
+		"Authorization": "Bearer " + accessToken2,
+	}
+
+	resp = makeRequest(t, "GET", baseURL+"/projects?project_id="+projectIDStr, nil, headers2)
+
+	if resp.StatusCode != http.StatusNotFound {
+		t.Errorf("Expected status code %d, got %d", http.StatusNotFound, resp.StatusCode)
 	}
 
 	// Cleanup
