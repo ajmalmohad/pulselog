@@ -59,3 +59,12 @@ func GetProjectMemberIDFromQuery(ctx *gin.Context) (uint, error) {
 	}
 	return projectMemberID, nil
 }
+
+func GetAPIKeyIDFromQuery(ctx *gin.Context) (uint, error) {
+	var apiKeyID uint
+	err := GetValueFromQuery(ctx, "api_key_id", &apiKeyID)
+	if err != nil {
+		return 0, err
+	}
+	return apiKeyID, nil
+}

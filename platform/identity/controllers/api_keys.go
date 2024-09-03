@@ -95,3 +95,54 @@ func (a *APIKeyController) GetAPIKeys(ctx *gin.Context) {
 		Data:    apiKeys,
 	})
 }
+
+func (a *APIKeyController) DeleteAPIKey(ctx *gin.Context) {
+	userID, _, err := utils.ExtractClaimsFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to extract user ID and email from claims",
+			Detail: err.Error(),
+		})
+		return
+	}
+
+	apiKeyID, err := utils.GetAPIKeyIDFromQuery(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
+			Error:  "Invalid request",
+			Detail: err.Error(),
+		})
+		return
+	}
+
+	apiKey, err := a.apiKeyRepository.FindByID(apiKeyID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, types.ErrorResponse{
+			Error:  "API key not found",
+			Detail: err.Error(),
+		})
+		return
+	}
+
+	if apiKey.CreatedBy != userID {
+		ctx.JSON(http.StatusForbidden, types.ErrorResponse{
+			Error:  "Forbidden",
+			Detail: "You are not allowed to delete this API key",
+		})
+		return
+	}
+
+	result, err := a.apiKeyRepository.Delete(apiKey)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to delete API key",
+			Detail: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, types.SuccessResponse{
+		Message: "API key deleted successfully",
+		Data:    result,
+	})
+}

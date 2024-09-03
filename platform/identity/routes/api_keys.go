@@ -18,4 +18,5 @@ func SetupAPIKeysRoutes(router *gin.Engine, db *gorm.DB) {
 
 	apiKeysRouter.POST("", apiKeyController.CreateAPIKey)
 	apiKeysRouter.GET("/all", apiKeyController.GetAPIKeys) // Gets all api keys for the user
+	apiKeysRouter.DELETE("", apiKeyController.DeleteAPIKey)
 }
