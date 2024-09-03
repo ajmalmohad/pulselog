@@ -50,7 +50,7 @@ func (a *APIKeyController) CreateAPIKey(ctx *gin.Context) {
 
 	apiKey := &models.APIKey{
 		ProjectID: projectID,
-		CreatedBy: &userID,
+		CreatedBy: userID,
 		Key:       generatedKey,
 	}
 
