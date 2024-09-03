@@ -17,7 +17,7 @@ func SetupProjectMemberRoutes(router *gin.Engine, db *gorm.DB) {
 	projectMemberRouter.Use(middleware.AuthMiddleware(userRepository))
 	projectMemberController := controllers.NewProjectMemberController(projectRepository, projectMemberRepository)
 
-	projectMemberRouter.POST("", projectMemberController.CreateProjectMember)
+	projectMemberRouter.POST("", projectMemberController.CreateProjectMember)     // Only admins are able to create project members
 	projectMemberRouter.GET("/all", projectMemberController.GetAllProjectMembers) // Gets all project members by project id
 	projectMemberRouter.GET("", middleware.SameProjectMemberOnly(projectMemberRepository), projectMemberController.GetProjectMember)
 	projectMemberRouter.PUT("", middleware.SameProjectAdminOnly(projectMemberRepository), projectMemberController.UpdateProjectMember)
