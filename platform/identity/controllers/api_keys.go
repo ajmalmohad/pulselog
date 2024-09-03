@@ -21,6 +21,18 @@ func NewAPIKeyController(apiKeyRepository *repositories.APIKeyRepository) *APIKe
 }
 
 func (a *APIKeyController) CreateAPIKey(ctx *gin.Context) {
+	var input struct {
+		ProjectID uint `json:"project_id" binding:"required"`
+	}
+
+	if err := ctx.ShouldBindJSON(&input); err != nil {
+		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
+			Error:  "Invalid request",
+			Detail: err.Error(),
+		})
+		return
+	}
+
 	userID, _, err := utils.ExtractClaimsFromContext(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
@@ -30,16 +42,7 @@ func (a *APIKeyController) CreateAPIKey(ctx *gin.Context) {
 		return
 	}
 
-	projectID, err := utils.GetProjectIDFromQuery(ctx)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, types.ErrorResponse{
-			Error:  "Invalid request",
-			Detail: err.Error(),
-		})
-		return
-	}
-
-	generatedKey, err := utils.CreateAPIToken(userID, projectID)
+	generatedKey, err := utils.CreateAPIToken(userID, input.ProjectID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
 			Error:  "Failed to generate API key",
@@ -49,7 +52,7 @@ func (a *APIKeyController) CreateAPIKey(ctx *gin.Context) {
 	}
 
 	apiKey := &models.APIKey{
-		ProjectID: projectID,
+		ProjectID: input.ProjectID,
 		CreatedBy: userID,
 		Key:       generatedKey,
 	}
@@ -65,5 +68,30 @@ func (a *APIKeyController) CreateAPIKey(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, types.SuccessResponse{
 		Message: "Project created successfully",
 		Data:    types.APIKeyResponse{APIKey: generatedKey},
+	})
+}
+
+func (a *APIKeyController) GetAPIKeys(ctx *gin.Context) {
+	userID, _, err := utils.ExtractClaimsFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to extract user ID and email from claims",
+			Detail: err.Error(),
+		})
+		return
+	}
+
+	apiKeys, err := a.apiKeyRepository.GetAPIKeysByUserID(userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, types.ErrorResponse{
+			Error:  "Failed to get API keys",
+			Detail: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, types.SuccessResponse{
+		Message: "API keys for the user retrieved successfully",
+		Data:    apiKeys,
 	})
 }

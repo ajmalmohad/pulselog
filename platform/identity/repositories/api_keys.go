@@ -17,3 +17,12 @@ func NewAPIKeyRepository(db *gorm.DB) *APIKeyRepository {
 		db:                db,
 	}
 }
+
+func (a *APIKeyRepository) GetAPIKeysByUserID(userID uint) ([]models.APIKey, error) {
+	var apiKeys []models.APIKey
+	err := a.db.
+		Where("created_by = ?", userID).
+		Find(&apiKeys).
+		Error
+	return apiKeys, err
+}
