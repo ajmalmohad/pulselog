@@ -14,7 +14,7 @@ services:
       - app-network
     restart: unless-stopped
 
-  app:
+  pulselog-identity:
     container_name: identity-app-prod
     build:
       context: ./platform/identity
@@ -34,6 +34,19 @@ services:
     depends_on:
       - postgres
     command: ["./main"]
+    restart: unless-stopped
+
+  dashboard-ui:
+    container_name: dashboard-ui-prod
+    build:
+      context: ./ui/dashboard
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      - pulselog-identity
     restart: unless-stopped
 
 volumes:

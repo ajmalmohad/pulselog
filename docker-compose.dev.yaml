@@ -14,7 +14,7 @@ services:
       - app-network
     restart: unless-stopped
 
-  app:
+  pulselog-identity:
       container_name: identity-app-dev
       build:
         context: ./platform/identity
@@ -36,6 +36,22 @@ services:
       depends_on:
         - postgres
       command: ["air", "-c", ".air.toml"]
+
+  dashboard-ui:
+    container_name: dashboard-ui-dev
+    build:
+      context: ./ui/dashboard
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./ui/dashboard:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - app-network
+    depends_on:
+      - pulselog-identity
+    restart: unless-stopped
 
   pgadmin:
     image: dpage/pgadmin4

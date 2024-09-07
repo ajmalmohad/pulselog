@@ -1,0 +1,25 @@
+FROM node:20-alpine AS builder
+
+RUN npm install -g pnpm
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml* ./
+
+RUN pnpm install
+
+COPY . .
+
+RUN pnpm run build
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+RUN npm i -g serve
+
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 8080
+
+CMD [ "serve", "-s", "dist", "-l", "8080" ]
