@@ -1,11 +1,14 @@
-import './App.css'
+import React from "react";
+import { Outlet } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "@app/store";
 
-function App() {
+const App: React.FC = () => {
   return (
-    <>
-      <p>Hi</p>
-    </>
-  )
-}
+    <Provider store={store}>
+      <Outlet />
+    </Provider>
+  );
+};
 
-export default App
+export default App;
