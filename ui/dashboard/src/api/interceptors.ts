@@ -38,10 +38,10 @@ export const setupInterceptors = (axiosInstance: AxiosInstance) => {
 
           try {
             const { data } = await identityAPIHandler.post("/auth/reauthenticate", { refresh_token: refreshToken });
-            dispatch(setTokens({ accessToken: data.accessToken }));
-            axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${data.accessToken}`;
+            dispatch(setTokens({ accessToken: data.access_token }));
+            axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${data.access_token}`;
 
-            refreshQueue.forEach((callback) => callback(data.accessToken));
+            refreshQueue.forEach((callback) => callback(data.access_token));
             refreshQueue = [];
 
             return axiosInstance(originalRequest);
