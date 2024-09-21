@@ -1,11 +1,10 @@
-import { setTokens } from '@app/store/auth/authSlice';
+import { useAuth } from '@app/hooks/useAuth';
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 export const LoginPage: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const dispatch = useDispatch();
+    const { login } = useAuth();
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
@@ -17,7 +16,7 @@ export const LoginPage: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Do your login logic here
+        login(email, password);
     };
 
     return (
