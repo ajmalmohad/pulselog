@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@app/store';
-import { clearTokens } from '@app/store/auth/authSlice';
+import { clearTokens, setTokens } from '@app/store/auth/authSlice';
+import { identityAPIHandler } from '@app/api/handlers';
 
 export const useAuth = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -8,9 +9,18 @@ export const useAuth = () => {
 
     const login = async (email: string, password: string) => {
         try {
-            // Replace this with your actual API call
-            console.log('Logging in with:', email, password);
-            
+            const { data } = await identityAPIHandler.post("/auth/login", {
+                email,
+                password,
+            });
+
+            dispatch(
+                setTokens({
+                    accessToken: data.data.access_token,
+                    refreshToken: data.data.refresh_token
+                })
+            );
+
             return true;
         } catch (error) {
             console.error('Login error:', error);

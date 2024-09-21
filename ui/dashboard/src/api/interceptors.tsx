@@ -1,29 +1,30 @@
-import { AxiosInstance, AxiosError } from "axios";
-import { AppDispatch, RootState } from "@app/store";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { identityAPIHandler } from "./handlers";
+import { AxiosInstance, AxiosError } from "axios";
+import { RootState, AppDispatch } from "@app/store";
+import { identityAPIHandler } from "@app/api/handlers";
 import { setTokens } from "@app/store/auth/authSlice";
 
-export const setupInterceptors = (axiosInstance: AxiosInstance) => {
+const useSetupInterceptors = (axiosInstance: AxiosInstance) => {
   const { accessToken, refreshToken } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
 
-  let isRefreshing = false;
-  let refreshQueue: Array<(token: string) => void> = [];
+  useEffect(() => {
+    let isRefreshing = false;
+    let refreshQueue: Array<(token: string) => void> = [];
 
-  axiosInstance.interceptors.request.use(
-    (config) => {
+    const addAuthHeader = (config: any) => {
       if (accessToken) {
         config.headers.Authorization = `Bearer ${accessToken}`;
       }
       return config;
-    },
-    (error) => Promise.reject(error)
-  );
+    };
 
-  axiosInstance.interceptors.response.use(
-    (response) => response,
-    async (error: AxiosError) => {
+    const handleRequestError = (error: any) => Promise.reject(error);
+
+    const handleResponseSuccess = (response: any) => response;
+
+    const handleResponseError = async (error: AxiosError) => {
       const originalRequest = error.config as any;
 
       if (error.response?.status === 401 && !originalRequest._retry) {
@@ -38,10 +39,10 @@ export const setupInterceptors = (axiosInstance: AxiosInstance) => {
 
           try {
             const { data } = await identityAPIHandler.post("/auth/reauthenticate", { refresh_token: refreshToken });
-            dispatch(setTokens({ accessToken: data.access_token }));
-            axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${data.access_token}`;
+            dispatch(setTokens({ accessToken: data.data.access_token }));
+            axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${data.data.access_token}`;
 
-            refreshQueue.forEach((callback) => callback(data.access_token));
+            refreshQueue.forEach((callback) => callback(data.data.access_token));
             refreshQueue = [];
 
             return axiosInstance(originalRequest);
@@ -61,6 +62,11 @@ export const setupInterceptors = (axiosInstance: AxiosInstance) => {
       }
 
       return Promise.reject(error);
-    }
-  );
+    };
+
+    axiosInstance.interceptors.request.use(addAuthHeader, handleRequestError);
+    axiosInstance.interceptors.response.use(handleResponseSuccess, handleResponseError);
+  }, [accessToken, refreshToken, dispatch, axiosInstance]);
 };
+
+export default useSetupInterceptors;
