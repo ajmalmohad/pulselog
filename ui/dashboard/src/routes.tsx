@@ -19,16 +19,20 @@ export const routes: AppRouteObject[] = [
   },
   {
     path: "/login",
-    element: (<ProtectedInverseRoute>
-      <LoginPage />
-    </ProtectedInverseRoute>)
+    element: (
+      <ProtectedInverseRoute>
+        <LoginPage />
+      </ProtectedInverseRoute>
+    )
     ,
   },
   {
     path: "/signup",
-    element: (<ProtectedInverseRoute>
-      <SignupPage />
-    </ProtectedInverseRoute>)
+    element: (
+      <ProtectedInverseRoute>
+        <SignupPage />
+      </ProtectedInverseRoute>
+    )
     ,
   },
   {
