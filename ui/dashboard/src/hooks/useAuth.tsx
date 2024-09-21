@@ -20,17 +20,25 @@ export const useAuth = () => {
                     refreshToken: data.data.refresh_token
                 })
             );
-
-            return true;
         } catch (error) {
             console.error('Login error:', error);
-            return false;
         }
     };
 
-    const logout = () => {
-        // Call your logout API here
-        dispatch(clearTokens());
+    const logout = async () => {
+        try {
+            const { data } = await identityAPIHandler.delete("/users/logout", {
+                data: {
+                    refresh_token: refreshToken
+                }
+            });
+
+            dispatch(
+                clearTokens()
+            );
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
     };
 
     const isAuthenticated = !!accessToken;
