@@ -24,5 +24,8 @@ func (r *ProjectMemberRepository) FindAllByProjectID(projectID uint) ([]models.P
 		Where("project_id = ?", projectID).
 		Find(&projectMembers).
 		Error
-	return projectMembers, err
+	if err != nil {
+		return nil, err
+	}
+	return projectMembers, nil
 }

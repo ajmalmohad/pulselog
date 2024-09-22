@@ -24,5 +24,8 @@ func (a *APIKeyRepository) GetAPIKeysByUserID(userID uint) ([]models.APIKey, err
 		Where("created_by = ?", userID).
 		Find(&apiKeys).
 		Error
-	return apiKeys, err
+	if err != nil {
+		return nil, err
+	}
+	return apiKeys, nil
 }

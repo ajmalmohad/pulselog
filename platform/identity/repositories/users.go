@@ -21,5 +21,8 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
 	var user models.User
 	result := r.db.Where("email = ?", email).First(&user)
-	return &user, result.Error
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
 }
