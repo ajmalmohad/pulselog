@@ -12,8 +12,9 @@ import (
 func SetupUserRoutes(router *gin.Engine, db *gorm.DB) {
 	userRouter := router.Group("/users")
 	userRepository := repositories.NewUserRepository(db)
+	refreshTokenRepository := repositories.NewRefreshTokenRepository(db)
 	userRouter.Use(middleware.AuthMiddleware(userRepository))
-	userController := controllers.NewUserController(userRepository)
+	userController := controllers.NewUserController(userRepository, refreshTokenRepository)
 
 	userRouter.DELETE("", userController.DeleteUserHandler)
 	userRouter.DELETE("/logout", userController.LogoutUserHandler)

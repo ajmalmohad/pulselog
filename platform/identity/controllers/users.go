@@ -14,9 +14,10 @@ type UserController struct {
 	refreshTokenRepository *repositories.RefreshTokenRepository
 }
 
-func NewUserController(userRepository *repositories.UserRepository) *UserController {
+func NewUserController(userRepository *repositories.UserRepository, refreshTokenRepository *repositories.RefreshTokenRepository) *UserController {
 	return &UserController{
-		userRepository: userRepository,
+		userRepository:         userRepository,
+		refreshTokenRepository: refreshTokenRepository,
 	}
 }
 
