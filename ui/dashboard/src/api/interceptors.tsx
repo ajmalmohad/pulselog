@@ -27,6 +27,10 @@ const useSetupInterceptors = (axiosInstance: AxiosInstance) => {
     const handleResponseError = async (error: AxiosError) => {
       const originalRequest = error.config as any;
 
+      if ((originalRequest.url === "/auth/login" || originalRequest.url === "/auth/signup")) {
+        return Promise.reject(error);
+      }
+
       if (error.response?.status === 401 && !originalRequest._retry) {
         if (originalRequest.url === "/auth/reauthenticate") {
           window.location.href = "/";
