@@ -12,6 +12,7 @@ export default defineConfig(() => {
 		plugins: [react()],
 		resolve: {
 			alias: {
+				"@": resolve(root, "."),
 				"@app": resolve(root, "."),
 				"@components": resolve(root, "components"),
 				"@pages": resolve(root, "pages"),

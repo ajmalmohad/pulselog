@@ -1,4 +1,5 @@
 import { useAuth } from '@app/hooks/useAuth';
+import { Input } from '@components/ui/input';
 import React, { useState } from 'react';
 
 export const LoginPage: React.FC = () => {
@@ -25,11 +26,12 @@ export const LoginPage: React.FC = () => {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Email:</label>
-                    <input type="email" value={email} onChange={handleEmailChange} />
+                    <Input type="email" value={email} onChange={handleEmailChange} />
                 </div>
                 <div>
                     <label>Password:</label>
-                    <input type="password" value={password} onChange={handlePasswordChange} />
+                    <Input type="password" value={password} onChange={handlePasswordChange} />
+
                 </div>
                 <button type="submit">Login</button>
             </form>
