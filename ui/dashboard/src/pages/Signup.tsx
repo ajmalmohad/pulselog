@@ -1,9 +1,11 @@
+import { useAuth } from '@app/hooks/useAuth';
 import React, { useState } from 'react';
 
 export const SignupPage: React.FC = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { signup } = useAuth();
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
@@ -19,7 +21,11 @@ export const SignupPage: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Add your login logic here
+        signup(
+            name,
+            email,
+            password
+        )
     };
 
     return (

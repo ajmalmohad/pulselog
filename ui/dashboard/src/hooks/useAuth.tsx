@@ -7,6 +7,25 @@ export const useAuth = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { accessToken, refreshToken } = useSelector((state: RootState) => state.auth);
 
+    const signup = async (name: string, email: string, password: string) => {
+        try {
+            const { data } = await identityAPIHandler.post("/auth/signup", {
+                name,
+                email,
+                password,
+            });
+
+            dispatch(
+                setTokens({
+                    accessToken: data.data.access_token,
+                    refreshToken: data.data.refresh_token
+                })
+            );
+        } catch (error) {
+            console.error('Signup error:', error);
+        }
+    }
+
     const login = async (email: string, password: string) => {
         try {
             const { data } = await identityAPIHandler.post("/auth/login", {
@@ -43,5 +62,5 @@ export const useAuth = () => {
 
     const isAuthenticated = !!accessToken;
 
-    return { login, logout, isAuthenticated, accessToken, refreshToken };
+    return { login, logout, signup, isAuthenticated, accessToken, refreshToken };
 };
