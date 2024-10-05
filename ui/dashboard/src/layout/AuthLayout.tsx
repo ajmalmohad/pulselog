@@ -7,12 +7,12 @@ export const AuthLayout: React.FC = () => {
         <div className="flex h-screen">
             <div className="w-1/2 relative rounded p-5">
                 <img
-                    src="https://picsum.photos/1000/800"
-                    alt="Desert landscape"
+                    src="/auth-screen.jpg"
+                    alt="Image"
                     className="object-cover h-full w-full rounded-md"
                 />
                 <div className="absolute top-10 left-10">
-                    <h1 className="text-2xl font-bold uppercase drop-shadow-xl">Pulselog</h1>
+                    <h1 className="text-xl font-bold uppercase drop-shadow-xl">Pulselog</h1>
                 </div>
             </div>
             <div className="w-1/2 p-12 flex flex-col items-center justify-center">
