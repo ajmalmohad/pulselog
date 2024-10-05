@@ -1,50 +1,38 @@
 import { useAuth } from '@app/hooks/useAuth';
-import React, { useState } from 'react';
+import { Input } from '@components/ui/input';
+import React from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+
+interface ISignupFormInput {
+    name: string;
+    email: string;
+    password: string;
+}
 
 export const SignupPage: React.FC = () => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const { register, handleSubmit } = useForm<ISignupFormInput>();
     const { signup } = useAuth();
-
-    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(e.target.value);
-    };
-
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(e.target.value);
-    };
-
-    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        signup(
-            name,
-            email,
-            password
-        )
-    };
+    const onSubmit: SubmitHandler<ISignupFormInput> = async (data) => {
+        await signup(data.name, data.email, data.password);
+    }
 
     return (
         <div>
             <h2>Signup</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div>
                     <label>Name:</label>
-                    <input type="text" value={name} onChange={handleNameChange} />
+                    <Input type="text" {...register("name")} />
                 </div>
                 <div>
                     <label>Email:</label>
-                    <input type="email" value={email} onChange={handleEmailChange} />
+                    <Input type="email" {...register("email")} />
                 </div>
                 <div>
                     <label>Password:</label>
-                    <input type="password" value={password} onChange={handlePasswordChange} />
+                    <Input type="password" {...register("password")} />
                 </div>
-                <button type="submit">Login</button>
+                <button type="submit">Signup</button>
             </form>
         </div>
     );

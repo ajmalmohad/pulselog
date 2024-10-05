@@ -1,37 +1,31 @@
 import { useAuth } from '@app/hooks/useAuth';
 import { Input } from '@components/ui/input';
-import React, { useState } from 'react';
+import React from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+
+interface ILoginFormInput {
+    email: string;
+    password: string;
+}
 
 export const LoginPage: React.FC = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const { register, handleSubmit } = useForm<ILoginFormInput>()
     const { login } = useAuth();
-
-    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(e.target.value);
-    };
-
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(e.target.value);
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        login(email, password);
-    };
+    const onSubmit: SubmitHandler<ILoginFormInput> = async (data) => {
+        await login(data.email, data.password);
+    }
 
     return (
         <div>
             <h2>Login</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div>
                     <label>Email:</label>
-                    <Input type="email" value={email} onChange={handleEmailChange} />
+                    <Input type="email" {...register("email")} />
                 </div>
                 <div>
                     <label>Password:</label>
-                    <Input type="password" value={password} onChange={handlePasswordChange} />
-
+                    <Input type="password" {...register("password")} /> 
                 </div>
                 <button type="submit">Login</button>
             </form>
