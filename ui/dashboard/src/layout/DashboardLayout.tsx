@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/resizable"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Outlet } from "react-router-dom"
+import { Nav } from "@/components/navbar/navbar"
+import { navbarLinks } from "@/data/navbar"
 
 export const DashboardLayout: React.FC = () => {
     const [isCollapsed, setIsCollapsed] = React.useState(false)
@@ -49,7 +51,7 @@ export const DashboardLayout: React.FC = () => {
                             "min-w-[50px] transition-all duration-300 ease-in-out"
                         )}
                     >
-                        <h1>{isCollapsed ? 'Closed' : 'Open'}</h1>
+                        <Nav isCollapsed={isCollapsed} links={navbarLinks}/>
                     </ResizablePanel>
                     <ResizableHandle withHandle />
                     <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>

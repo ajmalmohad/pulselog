@@ -7,6 +7,7 @@ import { LandingPage } from "@pages/LandingPage";
 import { ProtectedInverseRoute } from "./acl/ProtectedInverseRoute";
 import { AuthLayout } from "@app/layout/AuthLayout";
 import { DashboardLayout } from "@app/layout/DashboardLayout";
+import Settings from "@app/pages/Settings";
 
 export type AppRouteObject = RouteObject & {
   path?: string;
@@ -49,6 +50,10 @@ export const routes: AppRouteObject[] = [
         index: true,
         element: <Home />,
       },
+      {
+        path: "settings",
+        element: <Settings />,
+      }
     ],
   }
 ];
