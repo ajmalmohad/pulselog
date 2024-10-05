@@ -27,7 +27,7 @@ export const SignupPage: React.FC = () => {
 
     return (
         <div className='w-full max-w-[600px]'>
-            <h2 className="text-4xl font-bold mb-4">Create an account</h2>
+            <h2 className="text-4xl font-semibold mb-4">Create an account</h2>
             <p className="mb-8">
                 Already have an account?{' '}
                 <Link to="/auth/login" replace className="text-purple-500 hover:underline">

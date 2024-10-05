@@ -12,7 +12,7 @@ export const AuthLayout: React.FC = () => {
                     className="object-cover h-full w-full rounded-md"
                 />
                 <div className="absolute top-10 left-10">
-                    <h1 className="text-xl font-bold text-white uppercase drop-shadow-xl">Pulselog</h1>
+                    <h1 className="text-xl font-semibold text-white uppercase drop-shadow-xl">Pulselog</h1>
                 </div>
             </div>
             <div className="w-1/2 p-12 flex flex-col items-center justify-center">
