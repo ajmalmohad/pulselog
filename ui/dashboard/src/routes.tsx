@@ -46,7 +46,7 @@ export const routes: AppRouteObject[] = [
     ),
     children: [
       {
-        root: true,
+        index: true,
         element: <Home />,
       },
     ],
