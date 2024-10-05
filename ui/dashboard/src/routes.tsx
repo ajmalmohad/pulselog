@@ -5,6 +5,7 @@ import { LoginPage } from "@pages/Login";
 import { SignupPage } from "@pages/Signup";
 import { LandingPage } from "@pages/LandingPage";
 import { ProtectedInverseRoute } from "./acl/ProtectedInverseRoute";
+import { AuthLayout } from "./layout/AuthLayout";
 
 export type AppRouteObject = RouteObject & {
   path?: string;
@@ -18,22 +19,22 @@ export const routes: AppRouteObject[] = [
     element: <LandingPage />,
   },
   {
-    path: "/login",
+    path: "/auth",
     element: (
       <ProtectedInverseRoute>
-        <LoginPage />
+        <AuthLayout />
       </ProtectedInverseRoute>
-    )
-    ,
-  },
-  {
-    path: "/signup",
-    element: (
-      <ProtectedInverseRoute>
-        <SignupPage />
-      </ProtectedInverseRoute>
-    )
-    ,
+    ),
+    children: [
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
+        path: "signup",
+        element: <SignupPage />,
+      }
+    ],
   },
   {
     path: "/home",
