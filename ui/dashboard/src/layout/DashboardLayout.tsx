@@ -54,7 +54,7 @@ export const DashboardLayout: React.FC = () => {
                         <Nav isCollapsed={isCollapsed} links={navbarLinks}/>
                     </ResizablePanel>
                     <ResizableHandle withHandle />
-                    <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+                    <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="p-4">
                         <Outlet />
                     </ResizablePanel>
                 </ResizablePanelGroup>
