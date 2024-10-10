@@ -30,8 +30,5 @@ export const navbarLinks: NavbarLink[] = [
         title: "Logout",
         icon: LogOut,
         variant: "ghost",
-        onClick: () => {
-            console.log("Logout")
-        },
     },
 ]

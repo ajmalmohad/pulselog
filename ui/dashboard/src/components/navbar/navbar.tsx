@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/tooltip"
 import { Link, useLocation } from "react-router-dom"
 import { NavbarLink } from "@/data/navbar"
+import { useAuth } from "@/hooks/useAuth"
 
 interface NavProps {
     isCollapsed: boolean
@@ -15,7 +16,14 @@ interface NavProps {
 
 export function Nav({ links, isCollapsed }: NavProps) {
     const location = useLocation()
+    const { logout } = useAuth()
     const currentPath = location.pathname
+
+    const onClickHandler = (title: string) => async () => {
+        if (title === "Logout") {
+            await logout()
+        }
+    }
 
     return (
         <div
@@ -32,7 +40,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
                             <Tooltip key={index} delayDuration={0}>
                                 <TooltipTrigger asChild>
                                     <Link
-                                        onClick={link.onClick || undefined}
+                                        onClick={onClickHandler(link.title)}
                                         to={link.path || "#"}
                                         className={cn(
                                             buttonVariants({ variant: link.variant, size: "icon" }),
@@ -57,7 +65,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
                         ) : (
                             <Link
                                 key={index}
-                                onClick={link.onClick || undefined}
+                                onClick={onClickHandler(link.title)}
                                 to={link.path || "#"}
                                 className={cn(
                                     buttonVariants({ variant: link.variant, size: "sm" }),
