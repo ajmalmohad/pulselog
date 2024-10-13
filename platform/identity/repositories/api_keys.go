@@ -8,19 +8,19 @@ import (
 
 type APIKeyRepository struct {
 	GenericRepository[models.APIKey]
-	db *gorm.DB
+	DB *gorm.DB
 }
 
 func NewAPIKeyRepository(db *gorm.DB) *APIKeyRepository {
 	return &APIKeyRepository{
 		GenericRepository: NewGenericRepository[models.APIKey](db),
-		db:                db,
+		DB:                db,
 	}
 }
 
 func (a *APIKeyRepository) GetAPIKeysByUserID(userID uint) ([]models.APIKey, error) {
 	var apiKeys []models.APIKey
-	err := a.db.
+	err := a.DB.
 		Where("created_by = ?", userID).
 		Find(&apiKeys).
 		Error

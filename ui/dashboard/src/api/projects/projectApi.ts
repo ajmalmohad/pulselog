@@ -11,6 +11,11 @@ interface Project {
   id: string;
   name: string;
   owner_id: number;
+  created_at: string;
+  owner: {
+    name: string;
+    email: string;
+  }
 }
 
 const projectAPI = createApi({

@@ -1,5 +1,5 @@
 import { useGetAllProjectsQuery,useCreateProjectMutation } from '@/api/projects/projectApi';
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -23,6 +23,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
 
 type IProjectFormInput = {
     name: string;
@@ -31,6 +32,7 @@ type IProjectFormInput = {
 const Home: React.FC = () => {
     const { register, handleSubmit } = useForm<IProjectFormInput>()
     const [createProject] = useCreateProjectMutation();
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const {
         data,
@@ -61,6 +63,10 @@ const Home: React.FC = () => {
             success: 'Project created successfully',
             error: 'Failed to create project',
         });
+        
+        await createProjectPromise.then(() => {
+            setIsDialogOpen(false);
+        });
     }
 
     console.log(data);
@@ -74,7 +80,8 @@ const Home: React.FC = () => {
                         <TableRow>
                             <TableHead>Project ID</TableHead>
                             <TableHead>Name</TableHead>
-                            <TableHead className="text-right">Owner ID</TableHead>
+                            <TableHead>Created At</TableHead>
+                            <TableHead className="text-right">Owner</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -82,15 +89,16 @@ const Home: React.FC = () => {
                             <TableRow key={project.id}>
                                 <TableCell className="font-medium">{project.id}</TableCell>
                                 <TableCell className="font-medium">{project.name}</TableCell>
-                                <TableCell>{project.owner_id}</TableCell>
+                                <TableCell>{format(new Date(project.created_at), 'yyyy-MM-dd HH:mm:ss')}</TableCell>
+                                <TableCell className='text-right'>{project.owner.name}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                     <TableFooter>
-                        <Dialog>
+                        <Dialog  open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                             <DialogTrigger asChild>
                                 <TableRow className="cursor-pointer">
-                                    <TableCell colSpan={3} className='text-gray-500'>
+                                    <TableCell colSpan={4} className='text-gray-500'>
                                         <Plus />
                                     </TableCell>
                                 </TableRow>

@@ -8,19 +8,19 @@ import (
 
 type ProjectMemberRepository struct {
 	GenericRepository[models.ProjectMember]
-	db *gorm.DB
+	DB *gorm.DB
 }
 
 func NewProjectMemberRepository(db *gorm.DB) *ProjectMemberRepository {
 	return &ProjectMemberRepository{
 		GenericRepository: NewGenericRepository[models.ProjectMember](db),
-		db:                db,
+		DB:                db,
 	}
 }
 
 func (r *ProjectMemberRepository) FindAllByProjectID(projectID uint) ([]models.ProjectMember, error) {
 	var projectMembers []models.ProjectMember
-	err := r.db.
+	err := r.DB.
 		Where("project_id = ?", projectID).
 		Find(&projectMembers).
 		Error

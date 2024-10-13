@@ -8,19 +8,19 @@ import (
 
 type RefreshTokenRepository struct {
 	GenericRepository[models.RefreshToken]
-	db *gorm.DB
+	DB *gorm.DB
 }
 
 func NewRefreshTokenRepository(db *gorm.DB) *RefreshTokenRepository {
 	return &RefreshTokenRepository{
 		GenericRepository: NewGenericRepository[models.RefreshToken](db),
-		db:                db,
+		DB:                db,
 	}
 }
 
 func (r *RefreshTokenRepository) FindByToken(token string) (*models.RefreshToken, error) {
 	var refreshToken models.RefreshToken
-	result := r.db.Where("token = ?", token).First(&refreshToken)
+	result := r.DB.Where("token = ?", token).First(&refreshToken)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -28,7 +28,7 @@ func (r *RefreshTokenRepository) FindByToken(token string) (*models.RefreshToken
 }
 
 func (r *RefreshTokenRepository) DeleteByTokenAndUserID(token string, userID uint) error {
-	result := r.db.Where("token = ? AND user_id = ?", token, userID).Delete(&models.RefreshToken{})
+	result := r.DB.Where("token = ? AND user_id = ?", token, userID).Delete(&models.RefreshToken{})
 	if result.Error != nil {
 		return result.Error
 	}
@@ -36,7 +36,7 @@ func (r *RefreshTokenRepository) DeleteByTokenAndUserID(token string, userID uin
 }
 
 func (r *RefreshTokenRepository) DeleteByUserID(userID uint) error {
-	result := r.db.Where("user_id = ?", userID).Delete(&models.RefreshToken{})
+	result := r.DB.Where("user_id = ?", userID).Delete(&models.RefreshToken{})
 	if result.Error != nil {
 		return result.Error
 	}
