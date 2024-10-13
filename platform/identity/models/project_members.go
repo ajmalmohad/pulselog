@@ -10,10 +10,10 @@ const (
 type ProjectMember struct {
 	Base
 
-	ProjectID uint `gorm:"not null;index"`
-	UserID    uint `gorm:"not null;index"`
-	Role      Role `gorm:"not null;index;default:MEMBER"`
+	ProjectID uint `gorm:"not null;index" json:"project_id"`
+	UserID    uint `gorm:"not null;index" json:"user_id"`
+	Role      Role `gorm:"not null;index;default:MEMBER" json:"role"`
 
-	Project Project `gorm:"foreignKey:ProjectID;constraint:OnDelete:CASCADE"`
-	User    User    `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	Project Project `gorm:"foreignKey:ProjectID;constraint:OnDelete:CASCADE" json:"project"`
+	User    User    `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE" json:"user"`
 }
