@@ -9,10 +9,9 @@ import { identityAPIHandler } from "@app/api/handlers";
 export const setupInterceptors = (axiosInstance: AxiosInstance) => {
   let isRefreshing = false;
   let refreshQueue: Array<(token: string) => void> = [];
-  const refreshToken = localStorage.getItem("refresh_token");
-  const accessToken = localStorage.getItem("access_token");
 
   const addAuthHeader = (config: InternalAxiosRequestConfig) => {
+    const accessToken = localStorage.getItem("access_token");
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -46,6 +45,7 @@ export const setupInterceptors = (axiosInstance: AxiosInstance) => {
       if (!isRefreshing) {
         isRefreshing = true;
         originalRequest._retry = true;
+        const refreshToken = localStorage.getItem("refresh_token");
 
         try {
           const { data } = await identityAPIHandler.post(
