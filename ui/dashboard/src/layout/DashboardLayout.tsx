@@ -9,6 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { Outlet } from "react-router-dom"
 import { Nav } from "@/components/navbar/navbar"
 import { navbarLinks } from "@/data/navbar"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 export const DashboardLayout: React.FC = () => {
     const [isCollapsed, setIsCollapsed] = React.useState(false)
@@ -51,11 +52,13 @@ export const DashboardLayout: React.FC = () => {
                             "min-w-[50px] transition-all duration-300 ease-in-out"
                         )}
                     >
-                        <Nav isCollapsed={isCollapsed} links={navbarLinks}/>
+                        <Nav isCollapsed={isCollapsed} links={navbarLinks} />
                     </ResizablePanel>
                     <ResizableHandle withHandle />
-                    <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="p-4">
-                        <Outlet />
+                    <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+                        <ScrollArea className="h-full p-4">
+                            <Outlet />
+                        </ScrollArea>
                     </ResizablePanel>
                 </ResizablePanelGroup>
             </TooltipProvider>
