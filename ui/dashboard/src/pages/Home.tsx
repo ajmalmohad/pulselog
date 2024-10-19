@@ -24,6 +24,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 type IProjectFormInput = {
     name: string;
@@ -33,6 +34,7 @@ const Home: React.FC = () => {
     const { register, handleSubmit } = useForm<IProjectFormInput>()
     const [createProject] = useCreateProjectMutation();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const navigate = useNavigate();
 
     const {
         data,
@@ -69,7 +71,9 @@ const Home: React.FC = () => {
         });
     }
 
-    console.log(data);
+    const goToProjectPage = (projectId: string) => {
+        navigate(`projects/${projectId}`);
+    }
 
     return (
         <div>
@@ -81,7 +85,8 @@ const Home: React.FC = () => {
                             <TableHead>Project ID</TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Created At</TableHead>
-                            <TableHead className="text-right">Owner</TableHead>
+                            <TableHead>Owner</TableHead>
+                            <TableHead className="text-right"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -90,7 +95,10 @@ const Home: React.FC = () => {
                                 <TableCell className="font-medium">{project.id}</TableCell>
                                 <TableCell className="font-medium">{project.name}</TableCell>
                                 <TableCell>{format(new Date(project.created_at), 'yyyy-MM-dd HH:mm:ss')}</TableCell>
-                                <TableCell className='text-right'>{project.owner.name}</TableCell>
+                                <TableCell>{project.owner.name}</TableCell>
+                                <TableCell className='text-right'>
+                                    <Button variant='outline' onClick={() => goToProjectPage(project.id)}>View</Button>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

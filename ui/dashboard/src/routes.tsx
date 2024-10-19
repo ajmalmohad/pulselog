@@ -8,6 +8,7 @@ import { ProtectedInverseRoute } from "./acl/ProtectedInverseRoute";
 import { AuthLayout } from "@app/layout/AuthLayout";
 import { DashboardLayout } from "@app/layout/DashboardLayout";
 import Settings from "@app/pages/Settings";
+import Projects from "@app/pages/Projects";
 
 export type AppRouteObject = RouteObject & {
   path?: string;
@@ -53,6 +54,10 @@ export const routes: AppRouteObject[] = [
       {
         path: "settings",
         element: <Settings />,
+      },
+      {
+        path: "projects/:projectId",
+        element: <Projects />,
       }
     ],
   }
