@@ -106,7 +106,7 @@ const Home: React.FC = () => {
                         <Dialog  open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                             <DialogTrigger asChild>
                                 <TableRow className="cursor-pointer">
-                                    <TableCell colSpan={4} className='text-gray-500'>
+                                    <TableCell colSpan={5} className='text-gray-500'>
                                         <Plus />
                                     </TableCell>
                                 </TableRow>
